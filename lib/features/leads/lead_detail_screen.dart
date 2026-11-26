@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_formatters.dart';
+import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
 import 'lead_form_screen.dart';
@@ -32,7 +33,7 @@ class LeadDetailScreen extends StatelessWidget {
     final provider = context.watch<AEConnectProvider>();
     final matches = provider.leads.where((l) => l.id == effectiveLeadId);
 
-    if (matches.isEmpty && lead == null) {
+    if (matches.isEmpty && this.lead == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Lead Not Found')),
         body: const Center(child: Text('This lead was not found.')),
