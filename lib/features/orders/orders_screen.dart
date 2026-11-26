@@ -1,0 +1,108 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utils/app_formatters.dart';
+import '../../providers/aeconnect_provider.dart';
+import '../../components/status_pill.dart';
+
+class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<AEConnectProvider>();
+    final orders = provider.orders;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sales Orders'),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: orders.length,
+        itemBuilder: (context, index) {
+          final ord = orders[index];
+
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        ord.id,
+                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.primary),
+                      ),
+                      StatusPill(label: ord.status.label),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ord.customerName,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'PO Number: ${ord.poNumber} · ${ord.itemsCount} Line Items',
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                  ),
+                  const Divider(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Order Value', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                          const SizedBox(height: 2),
+                          Text(
+                            AppFormatters.rupee(ord.totalAmount),
+                            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: AppColors.primary),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text('Dispatch Date', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                          const SizedBox(height: 2),
+                          Text(
+                            AppFormatters.date(ord.dispatchDate),
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.local_shipping_outlined, size: 16, color: AppColors.primary),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Tracking: ${ord.trackingNumber}',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
