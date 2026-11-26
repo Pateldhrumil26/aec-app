@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_formatters.dart';
 import '../../models/lead_model.dart';
+import '../../models/permission.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
 import 'lead_form_screen.dart';
@@ -48,16 +49,17 @@ class LeadDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(lead.companyName),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add_alt_1_outlined),
-            tooltip: 'Assign Lead',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => AssignLeadScreen(leadId: lead.id)),
-              );
-            },
-          ),
+          if (provider.hasPermission(AppFeature.leads, AppAction.assign))
+            IconButton(
+              icon: const Icon(Icons.person_add_alt_1_outlined),
+              tooltip: 'Assign Lead',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AssignLeadScreen(leadId: lead.id)),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.trending_up_rounded),
             tooltip: 'Opportunity Details',
@@ -68,16 +70,17 @@ class LeadDetailScreen extends StatelessWidget {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            tooltip: 'Edit Lead',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => LeadFormScreen(lead: lead)),
-              );
-            },
-          ),
+          if (provider.hasPermission(AppFeature.leads, AppAction.edit))
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit Lead',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => LeadFormScreen(lead: lead)),
+                );
+              },
+            ),
         ],
       ),
       body: SingleChildScrollView(

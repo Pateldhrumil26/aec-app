@@ -110,17 +110,26 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
-                  child: Center(
-                    child: Text(
-                      initials.isEmpty ? 'JD' : initials,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
+                  child: ClipOval(
+                    child: Image.asset(
+                      user.avatarAsset,
+                      width: 34,
+                      height: 34,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: AppColors.primaryLight,
+                        alignment: Alignment.center,
+                        child: Text(
+                          initials,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                     ),
                   ),

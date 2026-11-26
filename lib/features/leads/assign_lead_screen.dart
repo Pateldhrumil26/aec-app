@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 
 class AssignLeadScreen extends StatefulWidget {
   final String leadId;
@@ -27,7 +29,10 @@ class _AssignLeadScreenState extends State<AssignLeadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return RoleGuard(
+      feature: AppFeature.leads,
+      action: AppAction.assign,
+      child: Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Assign lead'),
@@ -131,8 +136,9 @@ class _AssignLeadScreenState extends State<AssignLeadScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildKvRow(String k, String v) {
     return Padding(

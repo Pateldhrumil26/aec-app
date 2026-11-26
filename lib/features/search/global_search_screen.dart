@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/aeconnect_provider.dart';
+import '../../components/app_search_bar.dart';
 import '../leads/lead_detail_screen.dart';
 
 class GlobalSearchScreen extends StatefulWidget {
@@ -36,25 +37,16 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          autofocus: true,
-          decoration: InputDecoration(
+        titleSpacing: 0,
+        title: Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: AppSearchBar(
+            controller: _searchController,
+            autofocus: true,
             hintText: 'Search leads, quotes, orders...',
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            suffixIcon: _query.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() => _query = '');
-                    },
-                  )
-                : null,
+            onChanged: (v) => setState(() => _query = v),
+            onClear: () => setState(() => _query = ''),
           ),
-          onChanged: (v) => setState(() => _query = v),
         ),
       ),
       body: _query.isEmpty

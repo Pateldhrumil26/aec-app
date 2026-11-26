@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../components/app_search_bar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/task_model.dart';
 import '../../providers/aeconnect_provider.dart';
@@ -196,68 +197,23 @@ class _TasksScreenState extends State<TasksScreen> {
                 const SizedBox(height: 18),
 
                 // Search & Filter Toolbar (.record-tools .toolbar)
-                Row(
-                  children: [
-                    // Search tasks input
-                    Expanded(
-                      child: Container(
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                onChanged: (val) => setState(() => _searchQuery = val),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search tasks',
-                                  hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                                style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              GestureDetector(
-                                onTap: () => setState(() => _searchQuery = ''),
-                                child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
-                              ),
-                          ],
-                        ),
-                      ),
+                AppSearchBar(
+                  hintText: 'Search tasks',
+                  value: _searchQuery,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  actionButton: PopupMenuButton<String>(
+                    initialValue: _sortOption,
+                    tooltip: 'Sort and filter',
+                    onSelected: (val) => setState(() => _sortOption = val),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'Due date', child: Text('Sort by: Due date')),
+                      PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
+                      PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
+                    ],
+                    child: AppSearchBar.buildActionButton(
+                      child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF036E97)),
                     ),
-                    const SizedBox(width: 10),
-
-                    // Filter / Options button
-                    PopupMenuButton<String>(
-                      initialValue: _sortOption,
-                      tooltip: 'Sort and filter',
-                      onSelected: (val) => setState(() => _sortOption = val),
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'Due date', child: Text('Sort by: Due date')),
-                        const PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
-                        const PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
-                      ],
-                      child: Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF8EE),
-                          border: Border.all(color: const Color(0xFFE8DEC8)),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF935817)),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 14),
 

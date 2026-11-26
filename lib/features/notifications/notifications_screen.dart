@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../components/app_header.dart';
+import '../../components/app_search_bar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/notification_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../collections/collections_screen.dart';
+import '../orders/order_detail_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -45,7 +47,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const AppHeader(),
+      appBar: Navigator.canPop(context)
+          ? AppBar(title: const Text('Notifications'))
+          : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Center(
@@ -91,66 +95,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 const SizedBox(height: 18),
 
                 // Search & Filter toolbar
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                onChanged: (val) => setState(() => _searchQuery = val),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search notifications',
-                                  hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                                style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              GestureDetector(
-                                onTap: () => setState(() => _searchQuery = ''),
-                                child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
-                              ),
-                          ],
-                        ),
-                      ),
+                AppSearchBar(
+                  hintText: 'Search notifications',
+                  value: _searchQuery,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  actionButton: PopupMenuButton<String>(
+                    initialValue: _sortOption,
+                    tooltip: 'Sort options',
+                    onSelected: (val) => setState(() => _sortOption = val),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
+                      PopupMenuItem(value: 'Oldest first', child: Text('Sort by: Oldest first')),
+                    ],
+                    child: AppSearchBar.buildActionButton(
+                      child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF036E97)),
                     ),
-                    const SizedBox(width: 10),
-
-                    // Filter button
-                    PopupMenuButton<String>(
-                      initialValue: _sortOption,
-                      tooltip: 'Sort options',
-                      onSelected: (val) => setState(() => _sortOption = val),
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
-                        const PopupMenuItem(value: 'Oldest first', child: Text('Sort by: Oldest first')),
-                      ],
-                      child: Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.more_vert, size: 20, color: AppColors.textSecondary),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 14),
 
@@ -228,6 +188,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           },
                         ),
                 ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${filtered.length} record',
+                        style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                      ),
+                      const Text(
+                        'Showing all',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 80),
               ],
             ),
@@ -301,7 +278,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           OutlinedButton(
             onPressed: () {
               provider.markNotificationRead(item.id);
-              if (item.page == 'collections') {
+              if (item.page == 'orders') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => OrderDetailScreen(orderId: item.recordId ?? 'ORD-2026-0001'),
+                  ),
+                );
+              } else if (item.page == 'collections') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const CollectionsScreen()),

@@ -1,5 +1,7 @@
 enum OrderStatus {
   awaitingStock('Awaiting Stock'),
+  readyToPack('Ready to Pack'),
+  packed('Packed'),
   partiallyDispatched('Partially Dispatched'),
   dispatched('Dispatched'),
   delivered('Delivered');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/app_header.dart';
+import '../../components/app_search_bar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/aeconnect_provider.dart';
 import 'contact_form_screen.dart';
@@ -61,38 +62,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 const SizedBox(height: 18),
 
                 // Search box
-                Container(
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextField(
-                          onChanged: (val) => setState(() => _searchQuery = val),
-                          decoration: const InputDecoration(
-                            hintText: 'Search person, phone or company',
-                            hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
-                        ),
-                      ),
-                      if (_searchQuery.isNotEmpty)
-                        GestureDetector(
-                          onTap: () => setState(() => _searchQuery = ''),
-                          child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
-                        ),
-                    ],
-                  ),
+                AppSearchBar(
+                  hintText: 'Search person, phone or company',
+                  value: _searchQuery,
+                  onChanged: (val) => setState(() => _searchQuery = val),
                 ),
                 const SizedBox(height: 18),
 

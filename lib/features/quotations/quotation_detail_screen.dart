@@ -4,6 +4,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_formatters.dart';
 import '../../models/user_role.dart';
 import '../../models/quotation_model.dart';
+import '../../models/permission.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
 import 'quote_terms_screen.dart';
@@ -34,7 +35,7 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AEConnectProvider>();
-    final isManager = provider.currentRole == UserRole.manager;
+    final canApproveQuote = provider.hasPermission(AppFeature.quotations, AppAction.approve);
     final matches = provider.quotations.where((q) => q.id == effectiveQuoteId);
 
     if (matches.isEmpty && widget.quotation == null) {
@@ -121,7 +122,7 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
             const SizedBox(height: 16),
 
             // MANAGER COMMERCIAL DECISION PANEL
-            if (isManager && isUnderReview) ...[
+            if (canApproveQuote && isUnderReview) ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -305,15 +306,16 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Commercial Terms & Conditions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => QuoteTermsScreen(quoteId: quote.id)),
-                            );
-                          },
-                          child: const Text('Edit Terms'),
-                        ),
+                        if (provider.hasPermission(AppFeature.quotations, AppAction.edit))
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => QuoteTermsScreen(quoteId: quote.id)),
+                              );
+                            },
+                            child: const Text('Edit Terms'),
+                          ),
                       ],
                     ),
                     const SizedBox(height: 12),

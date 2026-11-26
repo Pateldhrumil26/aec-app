@@ -4,6 +4,7 @@ import '../../core/constants/app_colors.dart';
 import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/module_banner.dart';
+import '../../components/app_search_bar.dart';
 import '../pipeline/pipeline_screen.dart';
 import 'lead_detail_screen.dart';
 import 'lead_form_screen.dart';
@@ -95,7 +96,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       icon: const Icon(Icons.add, size: 16),
                       label: const Text('New lead'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF08897A),
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         minimumSize: const Size(0, 38),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -115,7 +116,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       '${allLeads.where((l) => l.stage == LeadStage.negotiation).length} in negotiation',
                   image: 'assets/photography/banner-network-v1.jpg',
                   actionLabel: 'View pipeline',
-                  actionIcon: Icons.analytics_outlined,
+                  actionIcon: Icons.bar_chart,
                   onAction: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const PipelineScreen()),
@@ -124,67 +125,23 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 const SizedBox(height: 18),
 
                 // Search & Filter Toolbar
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                onChanged: (val) => setState(() => _searchQuery = val),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search company, contact or city',
-                                  hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                                style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              GestureDetector(
-                                onTap: () => setState(() => _searchQuery = ''),
-                                child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
-                              ),
-                          ],
-                        ),
-                      ),
+                AppSearchBar(
+                  hintText: 'Search company, contact or city',
+                  value: _searchQuery,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  actionButton: PopupMenuButton<String>(
+                    initialValue: _sortOption,
+                    tooltip: 'Sort options',
+                    onSelected: (val) => setState(() => _sortOption = val),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
+                      PopupMenuItem(value: 'Oldest first', child: Text('Sort by: Oldest first')),
+                      PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
+                    ],
+                    child: AppSearchBar.buildActionButton(
+                      child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF036E97)),
                     ),
-                    const SizedBox(width: 10),
-
-                    // Filter / Options button
-                    PopupMenuButton<String>(
-                      initialValue: _sortOption,
-                      tooltip: 'Sort options',
-                      onSelected: (val) => setState(() => _sortOption = val),
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
-                        const PopupMenuItem(value: 'Oldest first', child: Text('Sort by: Oldest first')),
-                        const PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
-                      ],
-                      child: Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.more_vert, size: 20, color: AppColors.textSecondary),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 14),
 
@@ -205,7 +162,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: isSelected ? const Color(0xFF08897A) : Colors.transparent,
+                                  color: isSelected ? AppColors.primary : Colors.transparent,
                                   width: 2,
                                 ),
                               ),
@@ -215,7 +172,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                color: isSelected ? const Color(0xFF08897A) : const Color(0xFF7A8798),
+                                color: isSelected ? AppColors.primary : const Color(0xFF64748B),
                               ),
                             ),
                           ),
@@ -258,7 +215,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       ),
                     ),
                   )
-                else
+                else ...[
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -269,6 +226,25 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       return _buildLeadCard(context, lead);
                     },
                   ),
+                  const SizedBox(height: 12),
+                  // List Footer matching prototype: "X records", "Showing all"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${filtered.length} ${filtered.length == 1 ? "record" : "records"}',
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                        ),
+                        const Text(
+                          'Showing all',
+                          style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 80),
               ],
             ),
@@ -279,6 +255,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
   }
 
   Widget _buildLeadCard(BuildContext context, LeadModel lead) {
+    final isUnassigned = lead.isUnassigned;
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -291,32 +269,31 @@ class _LeadsScreenState extends State<LeadsScreen> {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row: Avatar Box + Company Name & City + Chevron
+            // Row 1: Avatar Box + Company Name & City + Chevron
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Initials Avatar Box
+                // Initials Avatar Box (Light cyan container with brand teal text)
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 38,
+                  height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5F5F0),
+                    color: const Color(0xFFE8F3F7),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Center(
-                    child: Text(
-                      lead.initials,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF08897A),
-                      ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    lead.initials,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF036E97),
                     ),
                   ),
                 ),
@@ -330,76 +307,126 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       Text(
                         lead.companyName,
                         style: const TextStyle(
-                          fontSize: 14.5,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.navy,
+                          letterSpacing: -0.2,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${lead.industry} · ${lead.city}, ${lead.state}',
                         style: const TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xFF62748C),
+                          fontSize: 12,
+                          color: Color(0xFF64748B),
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                const Icon(Icons.chevron_right, size: 18, color: Color(0xFFB4BFCD)),
+                const Icon(Icons.chevron_right, size: 20, color: Color(0xFF94A3B8)),
               ],
             ),
             const SizedBox(height: 12),
 
-            // Middle Row: Account Owner & Lead Source
+            // Row 2: Lead Owner Strip & Team Manager Avatar (100% match to prototype)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Left: Lead owner (Icon + label + owner name + source pill)
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 18,
-                      height: 18,
-                      margin: const EdgeInsets.only(right: 6),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFE5F5F0),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'JD',
-                          style: TextStyle(
-                            fontSize: 8.5,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF08897A),
+                    if (isUnassigned)
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFF1F5F9),
+                        ),
+                        child: const Icon(Icons.person_outline, size: 15, color: Color(0xFF64748B)),
+                      )
+                    else
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(shape: BoxShape.circle),
+                        child: ClipOval(
+                          child: Image.asset(
+                            lead.salesRep.contains('EMP105') ? 'assets/people/emp105.jpg' : 'assets/people/emp104.jpg',
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ),
-                    Text(
-                      lead.salesRep,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.navy,
-                      ),
-                    ),
                     const SizedBox(width: 8),
-                    Text(
-                      '·  ${lead.source}',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF62748C),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Lead owner',
+                          style: TextStyle(fontSize: 10.5, color: Color(0xFF64748B)),
+                        ),
+                        Text(
+                          lead.ownerName,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1E293B),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        lead.source,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF475569),
+                        ),
                       ),
                     ),
                   ],
                 ),
 
-                // Stage Badge
-                _buildStageBadge(lead.stage),
+                // Right: Team [mgr1 photo]
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Team',
+                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/people/mgr1.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
+            const SizedBox(height: 12),
+
+            // Row 3: Stage Pill Badge (e.g. [New], [Proposal])
+            _buildStageBadge(lead.stage),
           ],
         ),
       ),
@@ -407,8 +434,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
   }
 
   Widget _buildStageBadge(LeadStage stage) {
-    Color bg = const Color(0xFFEAF1FF);
-    Color fg = const Color(0xFF3168B8);
+    Color bg = const Color(0xFFF1F5F9);
+    Color fg = const Color(0xFF475569);
 
     if (stage == LeadStage.proposal || stage == LeadStage.qualified) {
       bg = const Color(0xFFEAF5EE);
@@ -416,16 +443,19 @@ class _LeadsScreenState extends State<LeadsScreen> {
     } else if (stage == LeadStage.discovery || stage == LeadStage.qualification) {
       bg = const Color(0xFFFFF3DD);
       fg = const Color(0xFF946419);
+    } else if (stage == LeadStage.negotiation) {
+      bg = const Color(0xFFE0F2FE);
+      fg = const Color(0xFF036E97);
     } else if (stage == LeadStage.closedWon) {
       bg = const Color(0xFFE6F6EE);
       fg = const Color(0xFF15803D);
     } else if (stage == LeadStage.closedLost) {
       bg = const Color(0xFFFCECEF);
-      fg = const Color(0xFFAC4353);
+      fg = const Color(0xFFBE123C);
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(4),

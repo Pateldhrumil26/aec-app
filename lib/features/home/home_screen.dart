@@ -13,9 +13,11 @@ import '../visits/active_visit_screen.dart';
 import '../quotations/quotations_screen.dart';
 import '../quotations/quotation_builder_screen.dart';
 import '../orders/orders_screen.dart';
+import '../orders/order_detail_screen.dart';
 import '../collections/collections_screen.dart';
 import '../moms/moms_screen.dart';
 import '../inventory/inventory_screen.dart';
+import 'manager_dashboard_view.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,7 +28,7 @@ class HomeScreen extends StatelessWidget {
     final role = provider.currentRole;
 
     if (role == UserRole.manager) {
-      return _buildManagerDashboard(context, provider);
+      return ManagerDashboardView(provider: provider);
     } else if (role == UserRole.warehouse) {
       return _buildWarehouseDashboard(context, provider);
     }
@@ -110,71 +112,71 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // 3. 4 KPI Metrics
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricTile(
+          // 3. 4 KPI Metrics (Matching prototype cards with pastel backgrounds and bottom-right icons)
+          Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildEmployeeKpiCard(
+                      label: 'Open leads',
+                      value: leads.length.toString(),
+                      icon: Icons.people_outline_rounded,
+                      iconColor: const Color(0xFF0284C7),
+                      bgColor: const Color(0xFFF0F9FF),
+                      borderColor: const Color(0xFFBAE6FD),
+                      onTap: () => provider.setTabIndex(1),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildEmployeeKpiCard(
+                      label: 'Follow-ups due',
+                      value: tasks.length.toString(),
+                      icon: Icons.assignment_outlined,
+                      iconColor: const Color(0xFFB45309),
+                      bgColor: const Color(0xFFFFFBEB),
+                      borderColor: const Color(0xFFFEF3C7),
+                      onTap: () => provider.setTabIndex(3),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildEmployeeKpiCard(
+                      label: 'Open quotations',
+                      value: quotes.length.toString(),
+                      icon: Icons.receipt_long_outlined,
+                      iconColor: const Color(0xFF7E22CE),
+                      bgColor: const Color(0xFFFAF5FF),
+                      borderColor: const Color(0xFFF3E8FF),
+                      onTap: () => Navigator.push(
                         context,
-                        label: 'Open leads',
-                        value: leads.length.toString(),
-                        onTap: () => provider.setTabIndex(1),
-                        borderRight: true,
-                        borderBottom: true,
+                        MaterialPageRoute(builder: (_) => const QuotationsScreen()),
                       ),
                     ),
-                    Expanded(
-                      child: _buildMetricTile(
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildEmployeeKpiCard(
+                      label: 'Active orders',
+                      value: orders.where((o) => o.status != OrderStatus.delivered).length.toString(),
+                      icon: Icons.local_shipping_outlined,
+                      iconColor: const Color(0xFF15803D),
+                      bgColor: const Color(0xFFF0FDF4),
+                      borderColor: const Color(0xFFDCFCE7),
+                      onTap: () => Navigator.push(
                         context,
-                        label: 'Follow-ups due',
-                        value: tasks.length.toString(),
-                        onTap: () => provider.setTabIndex(3),
-                        borderRight: false,
-                        borderBottom: true,
+                        MaterialPageRoute(builder: (_) => const OrdersScreen()),
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricTile(
-                        context,
-                        label: 'Open quotations',
-                        value: quotes.length.toString(),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const QuotationsScreen()),
-                        ),
-                        borderRight: true,
-                        borderBottom: false,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildMetricTile(
-                        context,
-                        label: 'Active orders',
-                        value: orders.where((o) => o.status != OrderStatus.delivered).length.toString(),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const OrdersScreen()),
-                        ),
-                        borderRight: false,
-                        borderBottom: false,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 14),
 
@@ -226,116 +228,140 @@ class HomeScreen extends StatelessWidget {
           // 5. Collections Card (.card.collection-compact)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.border),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Collections',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.navy,
-                      ),
+                // Cyan accent indicator bar on the left edge
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 3.5,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF0284C7),
+                      borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CollectionsScreen()),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 30),
-                        foregroundColor: AppColors.textMuted,
-                      ),
-                      child: const Text('Monthly report', style: TextStyle(fontSize: 11)),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 12),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Pending', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        SizedBox(height: 2),
-                        Text(
-                          '₹27,04,518.70',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.navy,
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Collections',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.navy,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Overdue', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        SizedBox(height: 2),
-                        Text(
-                          '₹21,97,165.90',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.danger,
+                          TextButton(
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CollectionsScreen()),
+                            ),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 30),
+                              foregroundColor: const Color(0xFF64748B),
+                            ),
+                            child: const Text('Monthly report', style: TextStyle(fontSize: 11)),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      'Received ₹16,61,953.30',
-                      style: TextStyle(fontSize: 11, color: AppColors.textMuted),
-                    ),
-                    Text(
-                      '38%',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.navy,
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: const LinearProgressIndicator(
-                    value: 0.38,
-                    minHeight: 6,
-                    backgroundColor: Color(0xFFEDF1F4),
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.teal),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Pending',
+                        style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        '₹27,04,518.70',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.navy,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Overdue', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                          Text(
+                            '₹21,97,165.90',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFBE123C),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Received ₹16,61,953.30',
+                            style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                          ),
+                          Text(
+                            '38%',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.navy,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: const LinearProgressIndicator(
+                          value: 0.38,
+                          minHeight: 5,
+                          backgroundColor: Color(0xFFEDF1F4),
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF036E97)),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CollectionsScreen()),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF036E97),
+                          side: const BorderSide(color: Color(0xFFCCE3FD)),
+                          minimumSize: const Size.fromHeight(38),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.chevron_right_rounded, size: 16, color: Color(0xFF036E97)),
+                            SizedBox(width: 4),
+                            Text(
+                              'View collection report',
+                              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                OutlinedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CollectionsScreen()),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.border),
-                    minimumSize: const Size.fromHeight(40),
-                  ),
-                  child: const Text('View collection report'),
                 ),
               ],
             ),
@@ -455,38 +481,41 @@ class HomeScreen extends StatelessWidget {
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 30),
-                        foregroundColor: AppColors.textMuted,
+                        foregroundColor: AppColors.primary,
                       ),
-                      child: const Text('View all', style: TextStyle(fontSize: 11)),
+                      child: const Text('View all', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 _buildOrderRow(
+                  context: context,
                   code: 'ORD-2026-0001',
                   company: 'Bright Infra Solutions · PO DEMO-PO-2026-001',
                   meta: 'Dispatch 1 Dec 2026 · ₹6,16,432',
                   status: 'Awaiting Stock',
-                  statusBg: AppColors.amberLight,
-                  statusFg: AppColors.amber,
+                  statusBg: const Color(0xFFFEF3C7),
+                  statusFg: const Color(0xFFB45309),
                 ),
-                const Divider(height: 16, color: AppColors.border),
+                const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
                 _buildOrderRow(
+                  context: context,
                   code: 'DEMO-SO-EMP104-2026-09-1',
                   company: 'Demo · Horizon Broadband · PO DEMO-PO-emp104-2026-09-1',
                   meta: 'Dispatch 1 Sept 2026 · ₹2,06,500',
                   status: 'Delivered',
-                  statusBg: AppColors.tealLight,
-                  statusFg: AppColors.teal,
+                  statusBg: const Color(0xFFDEF7EC),
+                  statusFg: const Color(0xFF03543F),
                 ),
-                const Divider(height: 16, color: AppColors.border),
+                const Divider(height: 24, thickness: 1, color: Color(0xFFF1F5F9)),
                 _buildOrderRow(
+                  context: context,
                   code: 'DEMO-SO-EMP104-2026-09-2',
                   company: 'Demo · Westlink Networks · PO DEMO-PO-emp104-2026-09-2',
                   meta: 'Dispatch 1 Sept 2026 · ₹2,65,500',
                   status: 'Delivered',
-                  statusBg: AppColors.tealLight,
-                  statusFg: AppColors.teal,
+                  statusBg: const Color(0xFFDEF7EC),
+                  statusFg: const Color(0xFF03543F),
                 ),
               ],
             ),
@@ -618,7 +647,66 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildEmployeeKpiCard({
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required Color borderColor,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: iconColor,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildOrderRow({
+    BuildContext? context,
     required String code,
     required String company,
     required String meta,
@@ -626,55 +714,113 @@ class HomeScreen extends StatelessWidget {
     required Color statusBg,
     required Color statusFg,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final rowContent = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              code,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppColors.navy,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: statusBg,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  fontSize: 10,
+        // 1. Delivery Truck Icon Container
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE0F2FE),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          alignment: Alignment.center,
+          child: const Icon(
+            Icons.local_shipping_rounded,
+            size: 19,
+            color: Color(0xFF0284C7),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // 2. Middle Details (Code, Company+PO, Dispatch+Amount, Status Badge below)
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                code,
+                style: const TextStyle(
+                  fontSize: 13.5,
                   fontWeight: FontWeight.w700,
-                  color: statusFg,
+                  color: AppColors.navy,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                company,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: Color(0xFF64748B),
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                meta,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: statusBg,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    color: statusFg,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 2),
-        Text(
-          company,
-          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          meta,
-          style: const TextStyle(fontSize: 10, color: AppColors.textLight),
+        const SizedBox(width: 8),
+        // 3. Subtle chevron arrow
+        const Icon(
+          Icons.chevron_right_rounded,
+          size: 18,
+          color: Color(0xFF94A3B8),
         ),
       ],
     );
+
+    if (context != null) {
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => OrderDetailScreen(orderId: code),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: rowContent,
+        ),
+      );
+    }
+
+    return rowContent;
   }
 
   // ==========================================
-  // 2. MANAGER DASHBOARD
+  // 2. WAREHOUSE DASHBOARD
   // ==========================================
-  Widget _buildManagerDashboard(BuildContext context, AEConnectProvider provider) {
+  Widget _buildWarehouseDashboard(BuildContext context, AEConnectProvider provider) {
+    final orders = provider.orders;
+    final readyToPack = orders.where((o) => o.status == OrderStatus.partiallyDispatched).length;
+    final awaitingStock = orders.where((o) => o.status == OrderStatus.awaitingStock).length;
+    final inTransit = orders.where((o) => o.status == OrderStatus.dispatched).length;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Column(
@@ -686,208 +832,34 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Manager overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.5, color: AppColors.navy)),
+                  const Text(
+                    'Warehouse orders',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      color: AppColors.navy,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text(DateFormat('d MMM yyyy').format(DateTime.now()), style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                ],
-              ),
-              ElevatedButton.icon(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuotationsScreen())),
-                icon: const Icon(Icons.verified_user_outlined, size: 16),
-                label: const Text('Review queue'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  minimumSize: const Size(0, 40),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Hero Banner with Network photo background
-          ModuleBanner(
-            label: 'AE CONNECT / TEAM',
-            title: 'Priya’s team desk',
-            description: '2 quotations awaiting review · 1 active orders',
-            image: 'assets/photography/banner-network-v1.jpg',
-            actionLabel: 'View team leads',
-            actionIcon: Icons.people_outline,
-            onAction: () => provider.setTabIndex(1),
-          ),
-          const SizedBox(height: 20),
-
-          // Team performance Section matching Image 2
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Team performance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                  const SizedBox(height: 2),
-                  Text('${DateFormat('MMMM yyyy').format(DateTime.now())} · 2 salespeople', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                  Text(
+                    DateFormat('d MMM yyyy').format(DateTime.now()),
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                  ),
                 ],
               ),
               OutlinedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
-                ),
-                icon: const Icon(Icons.bar_chart_outlined, size: 15),
-                label: const Text('Full team report'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.border),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  minimumSize: const Size(0, 36),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Hint box
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Text(
-              'Illustrative team data · 3 months · Sample targets are editable',
-              style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Month & Rank filters
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Report month *', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: 42,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(DateFormat('MMMM yyyy').format(DateTime.now()), style: const TextStyle(fontSize: 13, color: AppColors.textPrimary)),
-                            const Icon(Icons.calendar_today_outlined, size: 15, color: AppColors.textMuted),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Rank team by', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: 42,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Collected amount', style: TextStyle(fontSize: 13, color: AppColors.textPrimary)),
-                            Icon(Icons.keyboard_arrow_down, size: 18, color: AppColors.textMuted),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // As of 26 Nov 2026 Collection Card
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('As of ${DateFormat('d MMM yyyy').format(DateTime.now())}', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                const SizedBox(height: 12),
-                const Text('Collection due', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                const SizedBox(height: 4),
-                const Text(
-                  '₹33,02,589.90',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.6,
-                    color: Color(0xFF0F4C81),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  // ==========================================
-  // 3. WAREHOUSE DASHBOARD
-  // ==========================================
-  Widget _buildWarehouseDashboard(BuildContext context, AEConnectProvider provider) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Warehouse orders', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.5, color: AppColors.navy)),
-                  const SizedBox(height: 2),
-                  Text('Dispatch desk · ${DateFormat('d MMM yyyy').format(DateTime.now())}', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                ],
-              ),
-              ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventoryScreen())),
                 icon: const Icon(Icons.inventory_2_outlined, size: 16),
                 label: const Text('Inventory'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: Color(0xFFCCE3FD), width: 1),
+                  elevation: 0,
+                  minimumSize: const Size(0, 36),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ],
@@ -896,20 +868,142 @@ class HomeScreen extends StatelessWidget {
           ModuleBanner(
             label: 'AE CONNECT / WAREHOUSE',
             title: 'Dispatch desk',
-            description: '1 active orders · 1 awaiting stock',
+            description: '${orders.length} active orders · $awaitingStock awaiting stock',
             image: 'assets/photography/banner-warehouse-v1.jpg',
             actionLabel: 'Open orders',
             actionIcon: Icons.local_shipping_outlined,
             onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen())),
           ),
           const SizedBox(height: 16),
-          _buildOrderRow(
-            code: 'ORD-2026-0001',
-            company: 'Bright Infra Solutions · PO DEMO-PO-2026-001',
-            meta: 'Dispatch 1 Dec 2026 · ₹6,16,432',
-            status: 'Awaiting Stock',
-            statusBg: AppColors.amberLight,
-            statusFg: AppColors.amber,
+
+          // 3 KPI cards row (Ready to pack, Awaiting stock, In transit)
+          Row(
+            children: [
+              Expanded(
+                child: _buildWarehouseKpiCard(
+                  title: 'Ready to pack',
+                  value: '$readyToPack',
+                  icon: Icons.inventory_2_outlined,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildWarehouseKpiCard(
+                  title: 'Awaiting stock',
+                  value: '$awaitingStock',
+                  icon: Icons.access_time_rounded,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildWarehouseKpiCard(
+                  title: 'In transit',
+                  value: '$inTransit',
+                  icon: Icons.local_shipping_outlined,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Orders to fulfil Card
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Orders to fulfil',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.navy,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                      ),
+                      child: const Text(
+                        'View all',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildOrderRow(
+                  context: context,
+                  code: 'ORD-2026-0001',
+                  company: 'Bright Infra Solutions · PO DEMO-PO-2026-001',
+                  meta: 'Dispatch 1 Dec 2026 · ₹6,16,432',
+                  status: 'Awaiting Stock',
+                  statusBg: const Color(0xFFFEF3C7),
+                  statusFg: const Color(0xFFB45309),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWarehouseKpiCard({
+    required String title,
+    required String value,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDF4),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFDCFCE7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF15803D),
+                ),
+              ),
+              Icon(
+                icon,
+                size: 16,
+                color: const Color(0xFF16A34A),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../models/user_role.dart';
+import '../../models/permission.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/module_banner.dart';
+import '../../components/app_header.dart';
 import '../auth/login_screen.dart';
 import '../ess/ess_screen.dart';
 import '../ess/leaves_screen.dart';
@@ -21,9 +24,9 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('My profile'),
-      ),
+      appBar: Navigator.canPop(context)
+          ? AppBar(title: const Text('My profile'))
+          : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
@@ -41,84 +44,39 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Hero Banner matching prototype
+            // Hero Banner matching prototype with user photo on the right
             ModuleBanner(
               label: 'MY ACCOUNT',
               title: user.name,
               description: '${user.id.toUpperCase()} · ${user.title}',
               image: 'assets/photography/banner-workday-v1.jpg',
-            ),
-            const SizedBox(height: 16),
-
-            // Profile Header Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(18.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 58,
-                    height: 58,
-                    decoration: BoxDecoration(
+              trailing: Container(
+                width: 68,
+                height: 68,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2.5),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    user.avatarAsset,
+                    width: 68,
+                    height: 68,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
                       color: AppColors.primaryLight,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFE0E7EC), width: 2),
-                    ),
-                    child: Center(
+                      alignment: Alignment.center,
                       child: Text(
-                        user.name
-                            .split(' ')
-                            .map((n) => n.isNotEmpty ? n[0] : '')
-                            .take(2)
-                            .join(),
+                        user.name.split(' ').map((n) => n.isNotEmpty ? n[0] : '').take(2).join(),
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
                           color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'MY ACCOUNT',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          user.name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.navy,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${user.id} · ${user.title}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -144,7 +102,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildKvRow('Department', 'Commercial & Sales'),
+                  _buildKvRow('Department', user.department),
                   _buildKvRow('Territory', user.territory),
                   _buildKvRow('Reporting manager', user.reportingManager),
                   Padding(
@@ -271,39 +229,86 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.notifications_none_rounded,
                     iconColor: const Color(0xFF0369A1),
                     title: 'Notifications',
-                    badge: '2',
+                    badge: provider.unreadNotificationsCount > 0 ? '${provider.unreadNotificationsCount}' : null,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                     ),
                   ),
-                  const Divider(height: 1, color: AppColors.border),
-                  _buildListTile(
-                    context,
-                    icon: Icons.shield_outlined,
-                    iconColor: const Color(0xFF059669),
-                    title: 'HR reviews',
-                    onTap: () => Navigator.push(
+                  if (provider.canAccess(AppFeature.hrReviews)) ...[
+                    const Divider(height: 1, color: AppColors.border),
+                    _buildListTile(
                       context,
-                      MaterialPageRoute(builder: (_) => const HrReviewsScreen()),
+                      icon: Icons.shield_outlined,
+                      iconColor: const Color(0xFF059669),
+                      title: 'HR reviews',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HrReviewsScreen()),
+                      ),
+                    ),
+                  ],
+                  if (provider.canAccess(AppFeature.teamPerformance)) ...[
+                    const Divider(height: 1, color: AppColors.border),
+                    _buildListTile(
+                      context,
+                      icon: Icons.bar_chart_rounded,
+                      iconColor: const Color(0xFF0284C7),
+                      title: 'Team performance',
+                      badge: '2',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+
+            // Switch Demo Role (Instant testing across Employee, Manager, Warehouse)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Active workspace role',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.navy,
                     ),
                   ),
-                  const Divider(height: 1, color: AppColors.border),
-                  _buildListTile(
-                    context,
-                    icon: Icons.bar_chart_rounded,
-                    iconColor: const Color(0xFF0284C7),
-                    title: 'Team performance',
-                    badge: '2',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Switch role to test live frontend RBAC permissions and dynamic navigation.',
+                    style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildRoleChip(context, provider, UserRole.employee, 'Employee (EMP104)'),
+                        const SizedBox(width: 8),
+                        _buildRoleChip(context, provider, UserRole.manager, 'Manager (ASM001)'),
+                        const SizedBox(width: 8),
+                        _buildRoleChip(context, provider, UserRole.warehouse, 'Warehouse (WH001)'),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 18),
 
             // Sign out Button (.btn.danger.full)
             SizedBox(
@@ -419,6 +424,43 @@ class ProfileScreen extends StatelessWidget {
               color: AppColors.textLight,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRoleChip(BuildContext context, AEConnectProvider provider, UserRole role, String label) {
+    final isSelected = provider.currentRole == role;
+    return InkWell(
+      onTap: () {
+        if (!isSelected) {
+          provider.switchRole(role);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Switched role to ${role.label}'),
+              duration: const Duration(seconds: 2),
+              backgroundColor: AppColors.primary,
+            ),
+          );
+        }
+      },
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF036E97) : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF036E97) : const Color(0xFFCBD5E1),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? Colors.white : const Color(0xFF475569),
+          ),
         ),
       ),
     );

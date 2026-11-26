@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 import 'salesperson_report_screen.dart';
 
 class TeamPerformanceScreen extends StatelessWidget {
@@ -7,11 +9,13 @@ class TeamPerformanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Team performance'),
-      ),
+    return RoleGuard(
+      feature: AppFeature.teamPerformance,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('Team performance'),
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -88,6 +92,7 @@ class TeamPerformanceScreen extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 

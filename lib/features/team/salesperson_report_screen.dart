@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 
 class SalespersonReportScreen extends StatefulWidget {
   final String employeeId;

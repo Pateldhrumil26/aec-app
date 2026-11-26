@@ -20,6 +20,12 @@ class UserProfile {
 
   String get designation => title;
 
+  String get avatarAsset {
+    if (role == UserRole.manager) return 'assets/people/mgr1.jpg';
+    if (role == UserRole.warehouse) return 'assets/people/wh1.jpg';
+    return 'assets/people/emp104.jpg';
+  }
+
   const UserProfile({
     required this.role,
     required this.id,
@@ -60,11 +66,11 @@ class UserProfile {
     role: UserRole.warehouse,
     id: 'WH001',
     name: 'Amit Shah',
-    title: 'Warehouse & Fulfillment Controller',
+    title: 'Warehouse Operator',
     email: 'amit.shah@aeconnect.com',
     phone: '+91 98300 45678',
-    department: 'Warehouse Operations & Logistics',
-    territory: 'Central Logistics Hub (Noida)',
-    reportingManager: 'Priya Mehta (Area Sales Manager)',
+    department: 'Warehouse Operations',
+    territory: 'Central Warehouse',
+    reportingManager: 'Priya Mehta (ASM)',
   );
 }

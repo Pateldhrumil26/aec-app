@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../components/status_pill.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 
 class KycReviewScreen extends StatefulWidget {
   final String customerId;
@@ -27,11 +29,14 @@ class _KycReviewScreenState extends State<KycReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Customer KYC & credit'),
-      ),
+    return RoleGuard(
+      feature: AppFeature.customers,
+      action: AppAction.approve,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('Customer KYC & credit'),
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -124,6 +129,7 @@ class _KycReviewScreenState extends State<KycReviewScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 

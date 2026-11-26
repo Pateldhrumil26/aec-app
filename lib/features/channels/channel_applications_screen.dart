@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../components/status_pill.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 import 'channel_application_detail_screen.dart';
 
 class ChannelApplicationsScreen extends StatefulWidget {
@@ -45,11 +47,13 @@ class _ChannelApplicationsScreenState extends State<ChannelApplicationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Channel applications'),
-      ),
+    return RoleGuard(
+      feature: AppFeature.partnerApplications,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('Channel applications'),
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -147,6 +151,7 @@ class _ChannelApplicationsScreenState extends State<ChannelApplicationsScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

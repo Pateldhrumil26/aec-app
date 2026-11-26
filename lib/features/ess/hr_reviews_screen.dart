@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../components/status_pill.dart';
+import '../../core/rbac/role_guard.dart';
+import '../../models/permission.dart';
 
 class HrReviewsScreen extends StatefulWidget {
   const HrReviewsScreen({super.key});
@@ -49,11 +51,13 @@ class _HrReviewsScreenState extends State<HrReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('HR request reviews'),
-      ),
+    return RoleGuard(
+      feature: AppFeature.hrReviews,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('HR request reviews'),
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -159,6 +163,7 @@ class _HrReviewsScreenState extends State<HrReviewsScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 

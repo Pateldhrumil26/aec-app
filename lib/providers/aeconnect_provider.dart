@@ -9,6 +9,8 @@ import '../models/order_model.dart';
 import '../models/mom_model.dart';
 import '../models/customer_model.dart';
 import '../models/notification_model.dart';
+import '../models/permission.dart';
+import '../core/rbac/rbac_service.dart';
 
 class AEConnectProvider extends ChangeNotifier {
   // Authentication & Role State
@@ -18,6 +20,14 @@ class AEConnectProvider extends ChangeNotifier {
   UserProfile _currentUser = UserProfile.employeeProfile;
   UserProfile get currentUser => _currentUser;
   UserRole get currentRole => _currentUser.role;
+
+  // --- Centralized RBAC Helpers ---
+  bool canAccess(AppFeature feature) => RbacService.canAccess(currentRole, feature);
+  bool hasPermission(AppFeature feature, AppAction action) => RbacService.hasPermission(currentRole, feature, action);
+
+  void switchRole(UserRole role) {
+    login(role);
+  }
 
   void login(UserRole role, {String? customId}) {
     switch (role) {
@@ -124,9 +134,56 @@ class AEConnectProvider extends ChangeNotifier {
       notes: 'Underground single-mode 48F cable deployment.',
       createdAt: DateTime.now().subtract(const Duration(days: 3)),
     ),
+    LeadModel(
+      id: 'LD-2026-004',
+      initials: 'DS',
+      companyName: 'Delta Systems',
+      contactPerson: 'Kunal Mehta',
+      designation: 'Project Director',
+      phone: '+91 90000 00104',
+      email: 'kunal@delta.example',
+      industry: 'Government Contractor',
+      city: 'Vadodara',
+      state: 'Gujarat',
+      address: 'Alkapuri, Vadodara, Gujarat',
+      gstNumber: '24DDDDD0000D1Z5',
+      stage: LeadStage.closedWon,
+      estimatedValue: 420000,
+      source: 'Exhibition',
+      salesRep: 'Neha Patel (EMP105)',
+      asm: 'Priya Mehta',
+      notes: 'Government campus networking project.',
+      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+    ),
+    LeadModel(
+      id: 'LD-2026-005',
+      initials: 'EC',
+      companyName: 'Eastern Cables',
+      contactPerson: 'Samir Shah',
+      designation: 'Procurement Head',
+      phone: '+91 90000 00105',
+      email: 'samir@eastern.example',
+      industry: 'Distributor',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      address: 'Andheri East, Mumbai, Maharashtra',
+      gstNumber: '27EEEEE0000E1Z5',
+      stage: LeadStage.newLead,
+      estimatedValue: 250000,
+      source: 'Website',
+      salesRep: 'Unassigned',
+      asm: 'Priya Mehta',
+      notes: 'Inbound distributor inquiry. Needs assignment.',
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
   ];
 
-  List<LeadModel> get leads => List.unmodifiable(_leads);
+  List<LeadModel> get leads {
+    if (_currentUser.role == UserRole.manager) {
+      return List.unmodifiable(_leads);
+    }
+    return List.unmodifiable(_leads.where((l) => l.salesRep.contains('John Doe') || l.salesRep.contains('EMP104')));
+  }
 
   List<LeadModel> get filteredLeads {
     return _leads.where((lead) {
@@ -418,25 +475,36 @@ class AEConnectProvider extends ChangeNotifier {
   final List<OrderModel> _orders = [
     OrderModel(
       id: 'ORD-2026-0001',
-      customerName: 'Acme Technologies',
-      poNumber: 'PO-ACME-9912',
-      orderDate: DateTime.now().subtract(const Duration(days: 4)),
-      dispatchDate: DateTime.now().add(const Duration(days: 3)),
+      customerName: 'Bright Infra Solutions',
+      poNumber: 'DEMO-PO-2026-001',
+      orderDate: DateTime(2026, 11, 20),
+      dispatchDate: DateTime(2026, 12, 1),
       totalAmount: 616432,
       status: OrderStatus.awaitingStock,
       itemsCount: 8,
       trackingNumber: 'TRK-BLUEDART-882103',
     ),
     OrderModel(
-      id: 'ORD-2026-0002',
-      customerName: 'Metro Rail Telecom Corp',
-      poNumber: 'PO-MRT-2026-04',
-      orderDate: DateTime.now().subtract(const Duration(days: 12)),
-      dispatchDate: DateTime.now().subtract(const Duration(days: 1)),
-      totalAmount: 1845000,
+      id: 'DEMO-SO-EMP104-2026-09-1',
+      customerName: 'Demo · Horizon Broadband',
+      poNumber: 'DEMO-PO-emp104-2026-09-1',
+      orderDate: DateTime(2026, 8, 25),
+      dispatchDate: DateTime(2026, 9, 1),
+      totalAmount: 206500,
       status: OrderStatus.delivered,
-      itemsCount: 24,
-      trackingNumber: 'TRK-VRL-990142',
+      itemsCount: 12,
+      trackingNumber: 'TRK-DEL-0901',
+    ),
+    OrderModel(
+      id: 'DEMO-SO-EMP104-2026-09-2',
+      customerName: 'Demo · Westlink Networks',
+      poNumber: 'DEMO-PO-emp104-2026-09-2',
+      orderDate: DateTime(2026, 8, 28),
+      dispatchDate: DateTime(2026, 9, 1),
+      totalAmount: 265500,
+      status: OrderStatus.delivered,
+      itemsCount: 16,
+      trackingNumber: 'TRK-DEL-0902',
     ),
   ];
 
@@ -627,21 +695,54 @@ class AEConnectProvider extends ChangeNotifier {
     ),
   ];
 
-  List<NotificationModel> get notifications => List.unmodifiable(_notifications);
-  int get unreadNotificationsCount => _notifications.where((n) => !n.isRead).length;
+  final List<NotificationModel> _warehouseNotifications = [
+    NotificationModel(
+      id: 'wn1',
+      title: 'Order awaiting stock confirmation',
+      text: 'Confirm stock availability for ORD-2026-0001 before packing.',
+      at: DateTime(2026, 11, 24, 11, 8),
+      isRead: false,
+      page: 'orders',
+      recordId: 'ORD-2026-0001',
+    ),
+  ];
+
+  List<NotificationModel> get notifications =>
+      currentRole == UserRole.warehouse
+          ? List.unmodifiable(_warehouseNotifications)
+          : List.unmodifiable(_notifications);
+
+  int get unreadNotificationsCount =>
+      currentRole == UserRole.warehouse
+          ? _warehouseNotifications.where((n) => !n.isRead).length
+          : _notifications.where((n) => !n.isRead).length;
 
   void markAllNotificationsRead() {
-    for (int i = 0; i < _notifications.length; i++) {
-      _notifications[i] = _notifications[i].copyWith(isRead: true);
+    if (currentRole == UserRole.warehouse) {
+      for (int i = 0; i < _warehouseNotifications.length; i++) {
+        _warehouseNotifications[i] = _warehouseNotifications[i].copyWith(isRead: true);
+      }
+    } else {
+      for (int i = 0; i < _notifications.length; i++) {
+        _notifications[i] = _notifications[i].copyWith(isRead: true);
+      }
     }
     notifyListeners();
   }
 
   void markNotificationRead(String id) {
-    final idx = _notifications.indexWhere((n) => n.id == id);
-    if (idx != -1) {
-      _notifications[idx] = _notifications[idx].copyWith(isRead: true);
-      notifyListeners();
+    if (currentRole == UserRole.warehouse) {
+      final idx = _warehouseNotifications.indexWhere((n) => n.id == id);
+      if (idx != -1) {
+        _warehouseNotifications[idx] = _warehouseNotifications[idx].copyWith(isRead: true);
+        notifyListeners();
+      }
+    } else {
+      final idx = _notifications.indexWhere((n) => n.id == id);
+      if (idx != -1) {
+        _notifications[idx] = _notifications[idx].copyWith(isRead: true);
+        notifyListeners();
+      }
     }
   }
 

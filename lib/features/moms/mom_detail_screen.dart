@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../components/status_pill.dart';
+import '../../models/permission.dart';
+import '../../providers/aeconnect_provider.dart';
 
 class MomDetailScreen extends StatelessWidget {
   final String momId;
@@ -9,6 +12,9 @@ class MomDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AEConnectProvider>();
+    final canApproveMom = provider.hasPermission(AppFeature.moms, AppAction.approve);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -85,6 +91,54 @@ class MomDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+
+            // Manager MOM Review & Endorsement Action (Manager Only)
+            if (canApproveMom) ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0FDF4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.statusSuccessFg.withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.rate_review_rounded, color: AppColors.statusSuccessFg, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          'Manager MOM Approval & Feedback',
+                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, color: AppColors.statusSuccessFg),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'As Area Sales Manager, you can sign off on this meeting minute and endorse committed client action items.',
+                      style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.statusSuccessFg,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('MOM endorsed and approved successfully.')),
+                        );
+                      },
+                      icon: const Icon(Icons.check_circle_outline_rounded, size: 18),
+                      label: const Text('Endorse & Approve MOM'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             const SizedBox(height: 40),
           ],
         ),

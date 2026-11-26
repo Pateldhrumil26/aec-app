@@ -36,6 +36,9 @@ class LeadModel {
   final DateTime createdAt;
   final String? activeQuotationId;
 
+  bool get isUnassigned => salesRep.isEmpty || salesRep.toLowerCase().contains('unassigned');
+  String get ownerName => isUnassigned ? 'Unassigned' : (salesRep.contains('(') ? salesRep.split('(')[0].trim() : salesRep);
+
   const LeadModel({
     required this.id,
     required this.initials,

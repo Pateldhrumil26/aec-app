@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/app_header.dart';
+import '../../components/app_search_bar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/customer_model.dart';
 import '../../providers/aeconnect_provider.dart';
@@ -68,66 +69,22 @@ class _CustomersScreenState extends State<CustomersScreen> {
                 const SizedBox(height: 18),
 
                 // Search & Filter Toolbar
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                onChanged: (val) => setState(() => _searchQuery = val),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search company, GST or city',
-                                  hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                                style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              GestureDetector(
-                                onTap: () => setState(() => _searchQuery = ''),
-                                child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
-                              ),
-                          ],
-                        ),
-                      ),
+                AppSearchBar(
+                  hintText: 'Search company, GST or city',
+                  value: _searchQuery,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  actionButton: PopupMenuButton<String>(
+                    initialValue: _sortOption,
+                    tooltip: 'Sort options',
+                    onSelected: (val) => setState(() => _sortOption = val),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
+                      PopupMenuItem(value: 'City', child: Text('Sort by: City')),
+                    ],
+                    child: AppSearchBar.buildActionButton(
+                      child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF036E97)),
                     ),
-                    const SizedBox(width: 10),
-
-                    // Filter button
-                    PopupMenuButton<String>(
-                      initialValue: _sortOption,
-                      tooltip: 'Sort options',
-                      onSelected: (val) => setState(() => _sortOption = val),
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
-                        const PopupMenuItem(value: 'City', child: Text('Sort by: City')),
-                      ],
-                      child: Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.more_vert, size: 20, color: AppColors.textSecondary),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 14),
 

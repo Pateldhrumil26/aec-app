@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../components/app_search_bar.dart';
 import 'invoice_detail_screen.dart';
 import 'collection_form_screen.dart';
 import 'invoice_form_screen.dart';
@@ -314,22 +315,10 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                 child: Column(
                   children: [
                     // Search Field
-                    TextField(
+                    AppSearchBar(
                       controller: _searchController,
+                      hintText: 'Client, invoice, order or cheque',
                       onChanged: (_) => setState(() {}),
-                      decoration: InputDecoration(
-                        hintText: 'Client, invoice, order or cheque',
-                        prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.textMuted),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear, size: 16),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {});
-                                },
-                              )
-                            : null,
-                      ),
                     ),
                     const SizedBox(height: 12),
 
