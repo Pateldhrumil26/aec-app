@@ -54,7 +54,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               label: 'ORDER BOOK',
               title: '${allOrders.length} active orders',
               description:
-                  '${allOrders.where((o) => o.status == OrderStatus.inTransit).length} in transit · ${allOrders.where((o) => o.status == OrderStatus.awaitingStock).length} ready to pack',
+                  '${allOrders.where((o) => o.status == OrderStatus.dispatched).length} in transit · ${allOrders.where((o) => o.status == OrderStatus.awaitingStock).length} ready to pack',
               image: 'assets/photography/banner-warehouse-v1.jpg',
             ),
           ),

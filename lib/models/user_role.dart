@@ -18,6 +18,8 @@ class UserProfile {
   final String territory;
   final String reportingManager;
 
+  String get designation => title;
+
   const UserProfile({
     required this.role,
     required this.id,

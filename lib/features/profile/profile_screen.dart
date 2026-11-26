@@ -45,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
             ModuleBanner(
               label: 'MY ACCOUNT',
               title: user.name,
-              description: '${user.id.toUpperCase()} · ${user.designation}',
+              description: '${user.id.toUpperCase()} · ${user.title}',
               image: 'assets/photography/banner-workday-v1.jpg',
             ),
             const SizedBox(height: 16),
