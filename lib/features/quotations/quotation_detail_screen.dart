@@ -8,9 +8,11 @@ import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
 
 class QuotationDetailScreen extends StatefulWidget {
-  final String quoteId;
+  final String? quoteId;
+  final QuotationModel? quotation;
 
-  const QuotationDetailScreen({super.key, required this.quoteId});
+  const QuotationDetailScreen({super.key, this.quoteId, this.quotation})
+      : assert(quoteId != null || quotation != null, 'Either quoteId or quotation must be provided');
 
   @override
   State<QuotationDetailScreen> createState() => _QuotationDetailScreenState();
@@ -18,6 +20,8 @@ class QuotationDetailScreen extends StatefulWidget {
 
 class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
   final _reviewFeedbackController = TextEditingController(text: 'Pricing verified against minimum gross margin. Approved.');
+
+  String get effectiveQuoteId => widget.quoteId ?? widget.quotation!.id;
 
   @override
   void dispose() {
@@ -29,16 +33,16 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<AEConnectProvider>();
     final isManager = provider.currentRole == UserRole.manager;
-    final matches = provider.quotations.where((q) => q.id == widget.quoteId);
+    final matches = provider.quotations.where((q) => q.id == effectiveQuoteId);
 
-    if (matches.isEmpty) {
+    if (matches.isEmpty && widget.quotation == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Quotation Not Found')),
         body: const Center(child: Text('Quotation not found.')),
       );
     }
 
-    final quote = matches.first;
+    final quote = matches.isNotEmpty ? matches.first : widget.quotation!;
     final isUnderReview = quote.status == QuotationStatus.underReview;
 
     return Scaffold(

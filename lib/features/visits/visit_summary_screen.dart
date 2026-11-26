@@ -285,7 +285,10 @@ class _VisitSummaryScreenState extends State<VisitSummaryScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => LeadDetailScreen(lead: leadMatches.first),
+                                            builder: (_) => LeadDetailScreen(
+                                              leadId: leadMatches.first.id,
+                                              lead: leadMatches.first,
+                                            ),
                                           ),
                                         );
                                       } else {

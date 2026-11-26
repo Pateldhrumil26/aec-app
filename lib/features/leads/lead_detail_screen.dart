@@ -10,9 +10,13 @@ import '../visits/visit_form_screen.dart';
 import '../moms/moms_screen.dart';
 
 class LeadDetailScreen extends StatelessWidget {
-  final String leadId;
+  final String? leadId;
+  final LeadModel? lead;
 
-  const LeadDetailScreen({super.key, required this.leadId});
+  const LeadDetailScreen({super.key, this.leadId, this.lead})
+      : assert(leadId != null || lead != null, 'Either leadId or lead must be provided');
+
+  String get effectiveLeadId => leadId ?? lead!.id;
 
   static const List<String> pipelineSteps = [
     'Connect',
@@ -26,16 +30,16 @@ class LeadDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AEConnectProvider>();
-    final matches = provider.leads.where((l) => l.id == leadId);
+    final matches = provider.leads.where((l) => l.id == effectiveLeadId);
 
-    if (matches.isEmpty) {
+    if (matches.isEmpty && lead == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Lead Not Found')),
         body: const Center(child: Text('This lead was not found.')),
       );
     }
 
-    final lead = matches.first;
+    final lead = matches.isNotEmpty ? matches.first : this.lead!;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +51,7 @@ class LeadDetailScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const LeadFormScreen()),
+                MaterialPageRoute(builder: (_) => LeadFormScreen(lead: lead)),
               );
             },
           ),

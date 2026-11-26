@@ -289,7 +289,12 @@ class CustomerDetailScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => LeadDetailScreen(lead: linkedLead)),
+                            MaterialPageRoute(
+                              builder: (_) => LeadDetailScreen(
+                                leadId: linkedLead.id,
+                                lead: linkedLead,
+                              ),
+                            ),
                           );
                         },
                         child: Row(
@@ -335,7 +340,10 @@ class CustomerDetailScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => QuotationDetailScreen(quotation: linkedQuote),
+                              builder: (_) => QuotationDetailScreen(
+                                quoteId: linkedQuote.id,
+                                quotation: linkedQuote,
+                              ),
                             ),
                           );
                         },

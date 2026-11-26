@@ -265,7 +265,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => LeadDetailScreen(lead: lead)),
+          MaterialPageRoute(builder: (_) => LeadDetailScreen(leadId: lead.id, lead: lead)),
         );
       },
       borderRadius: BorderRadius.circular(10),

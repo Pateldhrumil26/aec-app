@@ -5,7 +5,8 @@ import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
 
 class LeadFormScreen extends StatefulWidget {
-  const LeadFormScreen({super.key});
+  final LeadModel? lead;
+  const LeadFormScreen({super.key, this.lead});
 
   @override
   State<LeadFormScreen> createState() => _LeadFormScreenState();
@@ -29,6 +30,27 @@ class _LeadFormScreenState extends State<LeadFormScreen> {
   String _category = 'Telecom / ISP';
   String _source = 'Field Visit';
   final LeadStage _stage = LeadStage.newLead;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.lead != null) {
+      final l = widget.lead!;
+      _companyController.text = l.companyName;
+      _contactPersonController.text = l.contactPerson;
+      _designationController.text = l.designation;
+      _phoneController.text = l.phone;
+      _emailController.text = l.email;
+      _cityController.text = l.city;
+      _stateController.text = l.state;
+      _addressController.text = l.address;
+      _gstController.text = l.gstNumber;
+      _estimatedValueController.text = l.estimatedValue.toStringAsFixed(0);
+      _notesController.text = l.notes;
+      _category = l.industry.isNotEmpty ? l.industry : 'Telecom / ISP';
+      _source = l.source.isNotEmpty ? l.source : 'Field Visit';
+    }
+  }
 
   @override
   void dispose() {
