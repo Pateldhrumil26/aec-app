@@ -5,7 +5,11 @@ import '../../components/status_pill.dart';
 class OpportunityDetailScreen extends StatelessWidget {
   final String opportunityId;
 
-  const OpportunityDetailScreen({super.key, this.opportunityId = 'op1'});
+  const OpportunityDetailScreen({
+    super.key,
+    String? opportunityId,
+    String? oppId,
+  }) : opportunityId = oppId ?? opportunityId ?? 'op1';
 
   @override
   Widget build(BuildContext context) {

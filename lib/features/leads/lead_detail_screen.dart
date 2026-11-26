@@ -64,7 +64,7 @@ class LeadDetailScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const OpportunityDetailScreen(oppId: 'op1')),
+                MaterialPageRoute(builder: (_) => const OpportunityDetailScreen(opportunityId: 'op1')),
               );
             },
           ),

@@ -136,7 +136,7 @@ class PipelineScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const OpportunityDetailScreen(oppId: 'op1'),
+                                    builder: (_) => const OpportunityDetailScreen(opportunityId: 'op1'),
                                   ),
                                 );
                               },
