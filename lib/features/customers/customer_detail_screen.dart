@@ -9,6 +9,8 @@ import '../leads/lead_detail_screen.dart';
 import '../leads/lead_form_screen.dart';
 import '../quotations/quotation_builder_screen.dart';
 import '../quotations/quotation_detail_screen.dart';
+import 'contact_form_screen.dart';
+import 'kyc_review_screen.dart';
 
 class CustomerDetailScreen extends StatelessWidget {
   final CustomerModel customer;
@@ -206,33 +208,41 @@ class CustomerDetailScreen extends StatelessWidget {
                           : '₹0 (Advance only)',
                     ),
                     _buildDivider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'KYC status',
-                          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: customer.kycStatus == 'Verified'
-                                ? const Color(0xFFEAF5EE)
-                                : const Color(0xFFFFF3DD),
-                            borderRadius: BorderRadius.circular(4),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => KycReviewScreen(customerId: customer.id)),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'KYC status',
+                            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                           ),
-                          child: Text(
-                            customer.kycStatus,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
                               color: customer.kycStatus == 'Verified'
-                                  ? const Color(0xFF2D7854)
-                                  : const Color(0xFF946419),
+                                  ? const Color(0xFFEAF5EE)
+                                  : const Color(0xFFFFF3DD),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              customer.kycStatus,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: customer.kycStatus == 'Verified'
+                                    ? const Color(0xFF2D7854)
+                                    : const Color(0xFF946419),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -242,39 +252,48 @@ class CustomerDetailScreen extends StatelessWidget {
                 _buildCard(
                   title: 'Your contacts',
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEAF1FF),
-                            borderRadius: BorderRadius.circular(6),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ContactFormScreen(contactId: 'ct1')),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEAF1FF),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Icon(Icons.person_outline, size: 18, color: AppColors.primary),
                           ),
-                          child: const Icon(Icons.person_outline, size: 18, color: AppColors.primary),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${customer.keyContact} · Procurement Head',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.navy,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${customer.keyContact} · Procurement Head',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.navy,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${customer.phone} · ${customer.email}',
-                                style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
-                              ),
-                            ],
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${customer.phone} · ${customer.email}',
+                                  style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textLight),
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -6,6 +6,8 @@ import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
 import 'lead_form_screen.dart';
+import 'assign_lead_screen.dart';
+import '../pipeline/opportunity_detail_screen.dart';
 import '../quotations/quotation_detail_screen.dart';
 import '../visits/visit_form_screen.dart';
 import '../moms/moms_screen.dart';
@@ -46,6 +48,26 @@ class LeadDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(lead.companyName),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add_alt_1_outlined),
+            tooltip: 'Assign Lead',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AssignLeadScreen(leadId: lead.id)),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.trending_up_rounded),
+            tooltip: 'Opportunity Details',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OpportunityDetailScreen(oppId: 'op1')),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             tooltip: 'Edit Lead',

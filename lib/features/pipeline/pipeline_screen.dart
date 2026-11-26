@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/app_formatters.dart';
+import 'opportunity_detail_screen.dart';
 
 class PipelineScreen extends StatelessWidget {
   const PipelineScreen({super.key});
@@ -130,37 +131,48 @@ class PipelineScreen extends StatelessWidget {
                           itemCount: deals.length,
                           itemBuilder: (ctx, dIdx) {
                             final deal = deals[dIdx];
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      deal['title'] as String,
-                                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      deal['client'] as String,
-                                      style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          AppFormatters.compactRupee(deal['value'] as double),
-                                          style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.primary),
-                                        ),
-                                        Text(
-                                          'Win: ${deal['prob']}',
-                                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.statusSuccessFg),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const OpportunityDetailScreen(oppId: 'op1'),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Card(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        deal['title'] as String,
+                                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        deal['client'] as String,
+                                        style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppFormatters.compactRupee(deal['value'] as double),
+                                            style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.primary),
+                                          ),
+                                          Text(
+                                            'Win: ${deal['prob']}',
+                                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.statusSuccessFg),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

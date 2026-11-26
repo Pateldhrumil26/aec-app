@@ -6,13 +6,21 @@ import '../pipeline/pipeline_screen.dart';
 import '../quotations/quotations_screen.dart';
 import '../orders/orders_screen.dart';
 import '../collections/collections_screen.dart';
+import '../collections/monthly_collections_screen.dart';
 import '../moms/moms_screen.dart';
 import '../inventory/inventory_screen.dart';
 import '../customers/customers_screen.dart';
 import '../customers/contacts_screen.dart';
+import '../customers/kyc_review_screen.dart';
+import '../channels/channel_applications_screen.dart';
+import '../devices/devices_screen.dart';
 import '../ess/ess_screen.dart';
+import '../ess/attendance_screen.dart';
 import '../ess/leaves_screen.dart';
 import '../ess/expenses_screen.dart';
+import '../ess/hr_reviews_screen.dart';
+import '../team/team_performance_screen.dart';
+import '../quotations/quote_terms_screen.dart';
 import '../search/global_search_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../profile/profile_screen.dart';
@@ -110,6 +118,17 @@ class MoreHubScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const PipelineScreen()),
                     ),
                   ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.verified_user_outlined,
+                    iconBg: const Color(0xFFE4F3F8),
+                    iconColor: const Color(0xFF087F9D),
+                    title: 'KYC & Credit review',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const KycReviewScreen()),
+                    ),
+                  ),
                 ]),
                 const SizedBox(height: 20),
 
@@ -137,6 +156,17 @@ class MoreHubScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const QuotationsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.gavel_rounded,
+                    iconBg: const Color(0xFFFAEFF7),
+                    iconColor: const Color(0xFFB15B9A),
+                    title: 'Commercial terms',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const QuoteTermsScreen()),
                     ),
                   ),
                 ]),
@@ -169,6 +199,17 @@ class MoreHubScreen extends StatelessWidget {
                   ),
                   _buildDivider(),
                   _buildNavItem(
+                    icon: Icons.receipt_long_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: const Color(0xFF2466DF),
+                    title: 'Monthly collections report',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MonthlyCollectionsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
                     icon: Icons.inventory_2_rounded,
                     iconBg: const Color(0xFFE6F6EE),
                     iconColor: const Color(0xFF178E74),
@@ -176,6 +217,29 @@ class MoreHubScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const InventoryScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.storefront_rounded,
+                    iconBg: const Color(0xFFFFF0DF),
+                    iconColor: const Color(0xFFC26319),
+                    title: 'Channel applications',
+                    badge: '1',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ChannelApplicationsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.devices_other_rounded,
+                    iconBg: const Color(0xFFF1F3F5),
+                    iconColor: const Color(0xFF526680),
+                    title: 'Registered devices',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const DevicesScreen()),
                     ),
                   ),
                 ]),
@@ -193,6 +257,17 @@ class MoreHubScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const EssScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.access_time_rounded,
+                    iconBg: const Color(0xFFE5F5F0),
+                    iconColor: const Color(0xFF128D7E),
+                    title: 'Attendance & hours',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AttendanceScreen()),
                     ),
                   ),
                   _buildDivider(),
@@ -215,6 +290,28 @@ class MoreHubScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.rate_review_rounded,
+                    iconBg: const Color(0xFFFAEFF7),
+                    iconColor: const Color(0xFFB15B9A),
+                    title: 'HR request reviews',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HrReviewsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.leaderboard_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: const Color(0xFF2466DF),
+                    title: 'Team performance',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
                     ),
                   ),
                 ]),

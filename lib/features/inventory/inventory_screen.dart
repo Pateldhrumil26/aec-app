@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import 'product_stock_detail_screen.dart';
+import 'inward_qc_detail_screen.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -74,9 +76,12 @@ class _InventoryScreenState extends State<InventoryScreen> with SingleTickerProv
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textMuted,
-          indicatorColor: AppColors.primary,
+          labelColor: const Color(0xFF137265),
+          unselectedLabelColor: const Color(0xFF7A8798),
+          indicatorColor: const Color(0xFF137265),
+          indicatorWeight: 2.0,
+          labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
           tabs: const [
             Tab(text: 'Products'),
             Tab(text: 'Reservations'),
@@ -139,36 +144,47 @@ class _InventoryScreenState extends State<InventoryScreen> with SingleTickerProv
             badgeFg = AppColors.kpiDangerFg;
           }
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(p['sku'] as String, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.primary)),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(6)),
-                        child: Text(p['status'] as String, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: badgeFg)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(p['name'] as String, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildMetricCol('Physical', p['physical'] as String),
-                      _buildMetricCol('Reserved', p['reserved'] as String),
-                      _buildMetricCol('Available', p['available'] as String, isPrimary: true),
-                    ],
-                  ),
-                ],
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProductStockDetailScreen(productId: p['sku'] as String),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(p['sku'] as String, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(6)),
+                          child: Text(p['status'] as String, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: badgeFg)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(p['name'] as String, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildMetricCol('Physical', p['physical'] as String),
+                        _buildMetricCol('Reserved', p['reserved'] as String),
+                        _buildMetricCol('Available', p['available'] as String, isPrimary: true),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -246,13 +262,22 @@ class _InventoryScreenState extends State<InventoryScreen> with SingleTickerProv
   Widget _buildInwardQcTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: const [
-        Card(
-          child: ListTile(
-            leading: Icon(Icons.verified_rounded, color: AppColors.statusSuccessFg),
-            title: Text('GRN-2026-0104 · Factory Dispatch Batch 9'),
-            subtitle: Text('50x 10G SFP+ Modules · QC Passed 100%'),
-            trailing: Text('Stocked', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.statusSuccessFg)),
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const InwardQcDetailScreen(inwardId: 'inw1')),
+            );
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: const Card(
+            child: ListTile(
+              leading: Icon(Icons.verified_rounded, color: AppColors.statusSuccessFg),
+              title: Text('GRN-2026-0104 · Factory Dispatch Batch 9'),
+              subtitle: Text('50x 10G SFP+ Modules · QC Passed 100%'),
+              trailing: Text('Stocked', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.statusSuccessFg)),
+            ),
           ),
         ),
       ],

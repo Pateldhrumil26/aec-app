@@ -6,6 +6,8 @@ import '../../models/user_role.dart';
 import '../../models/quotation_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
+import 'quote_terms_screen.dart';
+import 'proposal_response_screen.dart';
 
 class QuotationDetailScreen extends StatefulWidget {
   final String? quoteId;
@@ -49,6 +51,26 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
       appBar: AppBar(
         title: Text(quote.id),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.assignment_outlined),
+            tooltip: 'Commercial Terms',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => QuoteTermsScreen(quoteId: quote.id)),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.open_in_new_rounded),
+            tooltip: 'Proposal Response Preview',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProposalResponseScreen(quoteId: quote.id)),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.share_outlined),
             tooltip: 'Share Quote PDF',
@@ -279,7 +301,21 @@ class _QuotationDetailScreenState extends State<QuotationDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Commercial Terms & Conditions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Commercial Terms & Conditions', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => QuoteTermsScreen(quoteId: quote.id)),
+                            );
+                          },
+                          child: const Text('Edit Terms'),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 12),
                     _buildTermItem('Payment Terms', quote.paymentTerms),
                     const SizedBox(height: 8),

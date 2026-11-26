@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import 'invoice_detail_screen.dart';
+import 'collection_form_screen.dart';
+import 'invoice_form_screen.dart';
+import 'monthly_collections_screen.dart';
 import '../orders/orders_screen.dart';
 
 class CollectionInvoiceItem {
@@ -226,19 +230,61 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                     color: AppColors.navy,
                   ),
                 ),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const OrdersScreen()),
-                  ),
-                  icon: const Icon(Icons.local_shipping_outlined, size: 16),
-                  label: const Text('Sales orders'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.border),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    minimumSize: const Size(0, 38),
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                      ),
+                      icon: const Icon(Icons.local_shipping_outlined, size: 16),
+                      label: const Text('Sales orders'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.border),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        minimumSize: const Size(0, 36),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                      tooltip: 'Actions',
+                      onSelected: (val) {
+                        if (val == 'collection') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const CollectionFormScreen(invoiceId: 'inv1')),
+                          );
+                        } else if (val == 'invoice') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const InvoiceFormScreen(orderId: 'ord-demo')),
+                          );
+                        } else if (val == 'monthly') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const MonthlyCollectionsScreen()),
+                          );
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'collection',
+                          child: Text('Record collection'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'invoice',
+                          child: Text('Generate invoice'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'monthly',
+                          child: Text('Monthly collections report'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -573,123 +619,132 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
         ? 'Overdue since ${inv.dueDate.day} ${_monthName(inv.dueDate.month)} ${inv.dueDate.year}'
         : 'Due ${inv.dueDate.day} ${_monthName(inv.dueDate.month)} ${inv.dueDate.year}';
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header: Company + Status Badge
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  inv.clientName,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.navy,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: badgeBg,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  inv.status,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: badgeFg,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 3),
-          Text(
-            '${inv.invoiceNumber} · ${inv.orderCode}',
-            style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-          ),
-          const SizedBox(height: 12),
-
-          // Amounts Row: Pending collection vs Received
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Pending collection', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
-                  const SizedBox(height: 2),
-                  Text(
-                    _formatRupee(inv.pendingAmount),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.navy,
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text('Received', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
-                  const SizedBox(height: 2),
-                  Text(
-                    _formatRupee(inv.receivedAmount),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => InvoiceDetailScreen(invoiceId: inv.id)),
+        );
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Company + Status Badge
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    inv.clientName,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.navy,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Divider(height: 1, color: AppColors.border),
-          const SizedBox(height: 8),
-
-          // Footer: Due Date & Cheques info
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                dueDateStr,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: inv.isOverdue ? FontWeight.w600 : FontWeight.w400,
-                  color: inv.isOverdue ? AppColors.danger : AppColors.textMuted,
                 ),
-              ),
-              if (inv.heldCheques > 0)
-                Text(
-                  '${_formatRupee(inv.heldCheques)} in cheques',
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.amber,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                )
-              else
-                const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textLight),
-            ],
-          ),
-        ],
+                  child: Text(
+                    inv.status,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: badgeFg,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 3),
+            Text(
+              '${inv.invoiceNumber} · ${inv.orderCode}',
+              style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 12),
+
+            // Amounts Row: Pending collection vs Received
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Pending collection', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                    const SizedBox(height: 2),
+                    Text(
+                      _formatRupee(inv.pendingAmount),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.navy,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text('Received', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                    const SizedBox(height: 2),
+                    Text(
+                      _formatRupee(inv.receivedAmount),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.navy,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Divider(height: 1, color: AppColors.border),
+            const SizedBox(height: 8),
+
+            // Footer: Due Date & Cheques info
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  dueDateStr,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: inv.isOverdue ? FontWeight.w600 : FontWeight.w400,
+                    color: inv.isOverdue ? AppColors.danger : AppColors.textMuted,
+                  ),
+                ),
+                if (inv.heldCheques > 0)
+                  Text(
+                    '${_formatRupee(inv.heldCheques)} in cheques',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.amber,
+                    ),
+                  )
+                else
+                  const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textLight),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

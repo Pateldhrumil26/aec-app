@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../components/app_header.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/aeconnect_provider.dart';
+import 'contact_form_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -110,53 +111,65 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         const Divider(height: 1, thickness: 1, color: Color(0xFFEDF0F5)),
                     itemBuilder: (context, index) {
                       final c = contacts[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEAF1FF),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.person_outline,
-                                  size: 20, color: AppColors.primary),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ContactFormScreen(contactId: 'ct1'),
                             ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    c['name']!,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.navy,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '${c['role']} · ${c['company']}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFF526680),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${c['phone']} · ${c['email']}',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF8A98AC),
-                                    ),
-                                  ),
-                                ],
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEAF1FF),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(Icons.person_outline,
+                                    size: 20, color: AppColors.primary),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      c['name']!,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.navy,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${c['role']} · ${c['company']}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF526680),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${c['phone']} · ${c['email']}',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFF8A98AC),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios_rounded,
+                                  size: 14, color: Color(0xFF8A98AC)),
+                            ],
+                          ),
                         ),
                       );
                     },
