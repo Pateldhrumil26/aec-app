@@ -11,22 +11,22 @@ import '../quotations/quotation_builder_screen.dart';
 import '../quotations/quotation_detail_screen.dart';
 
 class CustomerDetailScreen extends StatelessWidget {
-  final CustomerModel? customer;
-  final String? customerId;
+  final CustomerModel customer;
 
-  const CustomerDetailScreen({super.key, this.customer, this.customerId});
+  const CustomerDetailScreen({super.key, required this.customer});
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AEConnectProvider>();
-    final targetId = customer?.id ?? customerId ?? 'c1';
-    final matches = provider.customers.where((c) => c.id == targetId);
-    final c = matches.isNotEmpty ? matches.first : (customer ?? provider.customers.first);
+    final leadMatches = provider.leads.where(
+      (l) => l.id == customer.leadId || l.companyName == customer.name,
+    );
+    final linkedLead = leadMatches.isNotEmpty ? leadMatches.first : null;
 
-    final leadMatches = provider.leads.where((l) => l.companyName == c.name);
-    final linkedLead = leadMatches.isNotEmpty ? leadMatches.first : provider.leads.first;
-
-    final quotes = provider.quotations.where((q) => q.customerName == c.name).toList();
+    final quoteMatches = provider.quotations.where(
+      (q) => q.leadId == customer.leadId || q.customerName == customer.name,
+    );
+    final linkedQuote = quoteMatches.isNotEmpty ? quoteMatches.first : null;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -39,9 +39,10 @@ class CustomerDetailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Title & Edit Button
+                // Back & Title Row with Edit button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
                       children: [
@@ -64,13 +65,14 @@ class CustomerDetailScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              c.name,
+                              customer.name,
                               style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: -0.5,
                                 color: AppColors.navy,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -78,21 +80,21 @@ class CustomerDetailScreen extends StatelessWidget {
                     ),
                     OutlinedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LeadFormScreen(lead: linkedLead),
-                          ),
-                        );
+                        if (linkedLead != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => LeadFormScreen(lead: linkedLead)),
+                          );
+                        }
                       },
-                      icon: const Icon(Icons.edit_outlined, size: 15),
+                      icon: const Icon(Icons.edit_outlined, size: 14),
                       label: const Text('Edit company details'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
                         side: const BorderSide(color: AppColors.border),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        minimumSize: const Size(0, 36),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        minimumSize: const Size(0, 34),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                       ),
                     ),
                   ],
@@ -110,19 +112,19 @@ class CustomerDetailScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Container(
-                        width: 52,
-                        height: 52,
+                        width: 48,
+                        height: 48,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEDF3FF),
-                          borderRadius: BorderRadius.circular(12),
+                          color: const Color(0xFFEAF1FF),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                           child: Text(
-                            c.initials,
+                            customer.initials,
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF3866A8),
+                              color: AppColors.primary,
                             ),
                           ),
                         ),
@@ -133,17 +135,17 @@ class CustomerDetailScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              c.name,
+                              customer.name,
                               style: const TextStyle(
-                                fontSize: 17,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.navy,
                               ),
                             ),
-                            const SizedBox(height: 3),
+                            const SizedBox(height: 2),
                             Text(
-                              '${c.category} · ${c.city}, ${c.state}',
-                              style: const TextStyle(fontSize: 12, color: Color(0xFF708096)),
+                              '${customer.category} · ${customer.city}, ${customer.state}',
+                              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                             ),
                           ],
                         ),
@@ -155,7 +157,7 @@ class CustomerDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Text(
-                          c.status,
+                          customer.status,
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -174,13 +176,13 @@ class CustomerDetailScreen extends StatelessWidget {
                   children: [
                     _buildRow(
                       label: 'Account owner',
-                      value: c.accountOwner,
+                      value: customer.accountOwner,
                       avatarInitials: 'JD',
                     ),
                     _buildDivider(),
                     _buildRow(
                       label: 'Area Sales Manager',
-                      value: c.asmName,
+                      value: customer.asmName,
                       avatarInitials: 'PM',
                     ),
                   ],
@@ -191,16 +193,16 @@ class CustomerDetailScreen extends StatelessWidget {
                 _buildCard(
                   title: 'Billing & account information',
                   children: [
-                    _buildRow(label: 'Billing address', value: c.address),
+                    _buildRow(label: 'Billing address', value: customer.address),
                     _buildDivider(),
-                    _buildRow(label: 'GST number', value: c.gst),
+                    _buildRow(label: 'GST number', value: customer.gst),
                     _buildDivider(),
-                    _buildRow(label: 'Payment terms', value: c.terms),
+                    _buildRow(label: 'Payment terms', value: customer.terms),
                     _buildDivider(),
                     _buildRow(
                       label: 'Credit limit',
-                      value: c.creditLimit > 0
-                          ? AppFormatters.rupee(c.creditLimit)
+                      value: customer.creditLimit > 0
+                          ? AppFormatters.rupee(customer.creditLimit)
                           : '₹0 (Advance only)',
                     ),
                     _buildDivider(),
@@ -214,17 +216,17 @@ class CustomerDetailScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: c.kycStatus == 'Verified'
+                            color: customer.kycStatus == 'Verified'
                                 ? const Color(0xFFEAF5EE)
                                 : const Color(0xFFFFF3DD),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            c.kycStatus,
+                            customer.kycStatus,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: c.kycStatus == 'Verified'
+                              color: customer.kycStatus == 'Verified'
                                   ? const Color(0xFF2D7854)
                                   : const Color(0xFF946419),
                             ),
@@ -236,15 +238,15 @@ class CustomerDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Your contacts Card
+                // Your Contacts Card (.card 'Your contacts')
                 _buildCard(
                   title: 'Your contacts',
                   children: [
                     Row(
                       children: [
                         Container(
-                          width: 34,
-                          height: 34,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: const Color(0xFFEAF1FF),
                             borderRadius: BorderRadius.circular(6),
@@ -257,7 +259,7 @@ class CustomerDetailScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${c.keyContact} · Procurement Head',
+                                '${customer.keyContact} · Procurement Head',
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
@@ -266,7 +268,7 @@ class CustomerDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${c.phone} · ${c.email}',
+                                '${customer.phone} · ${customer.email}',
                                 style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
                               ),
                             ],
@@ -278,22 +280,18 @@ class CustomerDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Connected records Card
+                // Connected Records Card (.card 'Connected records')
                 _buildCard(
                   title: 'Connected records',
                   children: [
-                    // Lead history
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LeadDetailScreen(lead: linkedLead),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    if (linkedLead != null) ...[
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => LeadDetailScreen(lead: linkedLead)),
+                          );
+                        },
                         child: Row(
                           children: [
                             Container(
@@ -303,7 +301,7 @@ class CustomerDetailScreen extends StatelessWidget {
                                 color: const Color(0xFFE5F5F0),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Icon(Icons.people_outline, size: 16, color: Color(0xFF128D7E)),
+                              child: const Icon(Icons.people_outline, size: 18, color: Color(0xFF08897A)),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -314,12 +312,12 @@ class CustomerDetailScreen extends StatelessWidget {
                                     'Lead history',
                                     style: TextStyle(
                                       fontSize: 13,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w700,
                                       color: AppColors.navy,
                                     ),
                                   ),
                                   Text(
-                                    c.name,
+                                    linkedLead.companyName,
                                     style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
                                   ),
                                 ],
@@ -329,60 +327,54 @@ class CustomerDetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ),
-                    _buildDivider(),
-
-                    // Quotations
-                    if (quotes.isNotEmpty)
-                      ...quotes.map((q) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => QuotationDetailScreen(quotation: q),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFAEFF7),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Icon(Icons.description_outlined, size: 16, color: Color(0xFFB15B9A)),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        q.id,
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.navy,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${q.status.label} · ${AppFormatters.rupee(q.grandTotal)}',
-                                        style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.chevron_right, size: 18, color: Color(0xFFB4BFCD)),
-                              ],
+                      _buildDivider(),
+                    ],
+                    if (linkedQuote != null) ...[
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => QuotationDetailScreen(quotation: linkedQuote),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFAEFF7),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(Icons.description_outlined, size: 18, color: Color(0xFFB15B9A)),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    linkedQuote.proposalNumber,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.navy,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${linkedQuote.status.label} · ${AppFormatters.rupee(linkedQuote.grandTotal)}',
+                                    style: const TextStyle(fontSize: 11.5, color: Color(0xFF62748C)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right, size: 18, color: Color(0xFFB4BFCD)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 18),
@@ -445,7 +437,7 @@ class CustomerDetailScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Color(0xFF62748C)),
+          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
