@@ -2,6 +2,7 @@ enum QuotationStatus {
   draft('Draft'),
   underReview('Under Review'),
   approved('Approved'),
+  sentBack('Sent Back'),
   sentToCustomer('Sent to Customer'),
   accepted('Accepted'),
   rejected('Rejected');

@@ -129,7 +129,7 @@ class AEConnectProvider extends ChangeNotifier {
       stage: LeadStage.qualified,
       estimatedValue: 320000,
       source: 'Website',
-      salesRep: 'John Doe (EMP104)',
+      salesRep: 'Neha Patel (EMP105)',
       asm: 'Priya Mehta',
       notes: 'Underground single-mode 48F cable deployment.',
       createdAt: DateTime.now().subtract(const Duration(days: 3)),
@@ -186,7 +186,7 @@ class AEConnectProvider extends ChangeNotifier {
   }
 
   List<LeadModel> get filteredLeads {
-    return _leads.where((lead) {
+    return leads.where((lead) {
       final matchesStage = _leadStageFilter == LeadStage.all || lead.stage == _leadStageFilter;
       final q = _leadSearchQuery.trim().toLowerCase();
       final matchesQuery = q.isEmpty ||
@@ -440,6 +440,27 @@ class AEConnectProvider extends ChangeNotifier {
       gstRate: 0.18,
       approvalNote: 'Approved by ASM Priya Mehta.',
     ),
+    QuotationModel(
+      id: 'QT-2026-0003',
+      proposalNumber: 'AEIPL/003/2627',
+      customerName: 'Cloud Connect Networks',
+      leadId: 'LD-2026-003',
+      issueDate: DateTime.now().subtract(const Duration(days: 1)),
+      validityDate: DateTime.now().add(const Duration(days: 29)),
+      status: QuotationStatus.draft,
+      items: const [
+        QuotationItem(
+          sku: 'AEC-PLC-1X8-SC',
+          name: 'PLC Optical Splitter 1x8 SC/APC',
+          category: 'Fiber Accessories',
+          unitRate: 1450,
+          quantity: 10,
+          discountPercent: 0.0,
+        ),
+      ],
+      freightFee: 1200,
+      gstRate: 0.18,
+    ),
   ];
 
   List<QuotationModel> get quotations => List.unmodifiable(_quotations);
@@ -539,9 +560,10 @@ class AEConnectProvider extends ChangeNotifier {
   final List<MomModel> _moms = [
     MomModel(
       id: 'MOM-2026-0001',
-      title: 'Enterprise Campus Fiber Backbone Review',
+      title: 'Fiber backbone specification review',
       accountName: 'Acme Technologies',
-      date: DateTime.now().subtract(const Duration(days: 4)),
+      date: DateTime(2026, 11, 24, 10, 30),
+      status: 'Submitted',
       attendees: const [
         'Rajesh Sharma (VP Infra, Acme)',
         'Vikram Joshi (Sr. Network Architect, Acme)',

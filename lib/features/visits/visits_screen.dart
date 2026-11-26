@@ -162,7 +162,7 @@ class _VisitsScreenState extends State<VisitsScreen> {
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: isSelected ? AppColors.primary : Colors.transparent,
+                                    color: isSelected ? AppColors.teal : Colors.transparent,
                                     width: 2,
                                   ),
                                 ),
@@ -172,7 +172,7 @@ class _VisitsScreenState extends State<VisitsScreen> {
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? AppColors.primary : const Color(0xFF64748B),
+                                  color: isSelected ? AppColors.teal : const Color(0xFF64748B),
                                 ),
                               ),
                             ),

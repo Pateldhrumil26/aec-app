@@ -10,7 +10,8 @@ import '../collections/collections_screen.dart';
 import '../orders/order_detail_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({super.key});
+  final bool isTab;
+  const NotificationsScreen({super.key, this.isTab = false});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
@@ -47,9 +48,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: Navigator.canPop(context)
-          ? AppBar(title: const Text('Notifications'))
-          : null,
+      appBar: widget.isTab ? null : AppBar(title: const Text('Notifications')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Center(

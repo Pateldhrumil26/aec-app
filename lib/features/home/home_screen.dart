@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/user_role.dart';
+import '../../models/lead_model.dart';
 import '../../models/order_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/module_banner.dart';
@@ -120,7 +121,7 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildEmployeeKpiCard(
                       label: 'Open leads',
-                      value: leads.length.toString(),
+                      value: leads.where((l) => l.stage != LeadStage.closedWon && l.stage != LeadStage.closedLost).length.toString(),
                       icon: Icons.people_outline_rounded,
                       iconColor: const Color(0xFF0284C7),
                       bgColor: const Color(0xFFF0F9FF),
@@ -132,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildEmployeeKpiCard(
                       label: 'Follow-ups due',
-                      value: tasks.length.toString(),
+                      value: tasks.where((t) => !t.isCompleted).length.toString(),
                       icon: Icons.assignment_outlined,
                       iconColor: const Color(0xFFB45309),
                       bgColor: const Color(0xFFFFFBEB),
@@ -348,16 +349,9 @@ class HomeScreen extends StatelessWidget {
                           minimumSize: const Size.fromHeight(38),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.chevron_right_rounded, size: 16, color: Color(0xFF036E97)),
-                            SizedBox(width: 4),
-                            Text(
-                              'View collection report',
-                              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                        child: const Text(
+                          '› View collection report',
+                          style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],

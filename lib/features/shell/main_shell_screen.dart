@@ -28,10 +28,10 @@ class MainShellScreen extends StatelessWidget {
     final List<Widget> screens = isWarehouse
         ? const [
             HomeScreen(),
-            OrdersScreen(),
-            InventoryScreen(),
-            NotificationsScreen(),
-            ProfileScreen(),
+            OrdersScreen(isTab: true),
+            InventoryScreen(isTab: true),
+            NotificationsScreen(isTab: true),
+            ProfileScreen(isTab: true),
           ]
         : const [
             HomeScreen(),
@@ -107,8 +107,8 @@ class MainShellScreen extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: isManager ? _buildBadgeIcon(Icons.people_outline_rounded, '1') : const Icon(Icons.people_outline_rounded),
-          activeIcon: const Icon(Icons.people_rounded),
+          icon: isManager ? _buildBadgeIcon(Icons.group_outlined, '1') : const Icon(Icons.group_outlined),
+          activeIcon: const Icon(Icons.group_rounded),
           label: 'Leads',
         ),
         const BottomNavigationBarItem(
@@ -117,13 +117,13 @@ class MainShellScreen extends StatelessWidget {
           label: 'Visits',
         ),
         const BottomNavigationBarItem(
-          icon: Icon(Icons.task_alt_rounded),
-          activeIcon: Icon(Icons.check_circle_rounded),
+          icon: Icon(Icons.check_box_outlined),
+          activeIcon: Icon(Icons.check_box_rounded),
           label: 'Tasks',
         ),
         BottomNavigationBarItem(
-          icon: _buildBadgeIcon(Icons.grid_view_rounded, isManager ? '48' : '29'),
-          activeIcon: const Icon(Icons.grid_view_sharp),
+          icon: _buildBadgeIcon(Icons.menu_rounded, isManager ? '48' : '29'),
+          activeIcon: const Icon(Icons.menu_rounded),
           label: 'More',
         ),
       ],

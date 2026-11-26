@@ -210,94 +210,107 @@ class ManagerDashboardView extends StatelessWidget {
           // 4. Card 1: Collection due Summary Card (Exact match to Photo 1)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: const Border(
-                top: BorderSide(color: Color(0xFF036E97), width: 3),
-                left: BorderSide(color: AppColors.border),
-                right: BorderSide(color: AppColors.border),
-                bottom: BorderSide(color: AppColors.border),
-              ),
+              border: Border.all(color: AppColors.border),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Collection due',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  '₹33,02,589.90',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.6,
-                    color: Color(0xFF036E97),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 3,
+                      color: const Color(0xFF036E97),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  '27 unpaid invoices due by this date',
-                  style: TextStyle(fontSize: 11.5, color: Color(0xFF8A98AC)),
-                ),
-                const Divider(height: 26, thickness: 1, color: Color(0xFFF1F5F9)),
+                  Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Collection due',
+                          style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          '₹33,02,589.90',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.6,
+                            color: Color(0xFF036E97),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          '27 unpaid invoices due by this date',
+                          style: TextStyle(fontSize: 11.5, color: Color(0xFF8A98AC)),
+                        ),
+                        const Divider(height: 26, thickness: 1, color: Color(0xFFF1F5F9)),
 
-                // 2x2 Stat Grid
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text('Collected this month', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                          SizedBox(height: 2),
-                          Text('₹19,09,723.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                          SizedBox(height: 14),
-                          Text('Not yet due', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                          SizedBox(height: 2),
-                          Text('₹8,52,502.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text('Overdue', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                          SizedBox(height: 2),
-                          Text('₹33,02,589.90', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFFB45309))),
-                          SizedBox(height: 14),
-                          Text('Due in next 7 days', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
-                          SizedBox(height: 2),
-                          Text('₹8,52,502.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 26, thickness: 1, color: Color(0xFFF1F5F9)),
+                        // 2x2 Stat Grid
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text('Collected this month', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                                  SizedBox(height: 2),
+                                  Text('₹19,09,723.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                                  SizedBox(height: 14),
+                                  Text('Not yet due', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                                  SizedBox(height: 2),
+                                  Text('₹8,52,502.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text('Overdue', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                                  SizedBox(height: 2),
+                                  Text('₹33,02,589.90', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFFB45309))),
+                                  SizedBox(height: 14),
+                                  Text('Due in next 7 days', style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B))),
+                                  SizedBox(height: 2),
+                                  Text('₹8,52,502.80', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 26, thickness: 1, color: Color(0xFFF1F5F9)),
 
-                // Footer lines
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Total pending', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('₹41,55,092.70', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Uncleared cheques', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('₹3,59,315.90', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                  ],
-                ),
-              ],
+                        // Footer lines
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text('Total pending', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                            Text('₹41,55,092.70', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text('Uncleared cheques', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                            Text('₹3,59,315.90', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 14),

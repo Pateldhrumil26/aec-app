@@ -15,7 +15,8 @@ import '../team/team_performance_screen.dart';
 import '../notifications/notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final bool isTab;
+  const ProfileScreen({super.key, this.isTab = false});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +25,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: Navigator.canPop(context)
-          ? AppBar(title: const Text('My profile'))
-          : null,
+      appBar: isTab ? null : AppBar(title: const Text('My profile')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
@@ -314,9 +313,16 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 46,
-              child: ElevatedButton.icon(
+              child: OutlinedButton.icon(
                 onPressed: () {
                   provider.logout();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Signed out. Saved records and active visits are retained locally.'),
+                      duration: Duration(seconds: 3),
+                      backgroundColor: AppColors.navy,
+                    ),
+                  );
                   Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                     (route) => false,
@@ -327,9 +333,9 @@ class ProfileScreen extends StatelessWidget {
                   'Sign out',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.danger,
-                  foregroundColor: Colors.white,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.danger,
+                  side: const BorderSide(color: AppColors.danger, width: 1.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),

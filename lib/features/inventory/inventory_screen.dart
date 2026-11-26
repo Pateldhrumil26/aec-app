@@ -9,7 +9,8 @@ import 'product_stock_detail_screen.dart';
 import 'inward_qc_detail_screen.dart';
 
 class InventoryScreen extends StatefulWidget {
-  const InventoryScreen({super.key});
+  final bool isTab;
+  const InventoryScreen({super.key, this.isTab = false});
 
   @override
   State<InventoryScreen> createState() => _InventoryScreenState();
@@ -127,9 +128,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       feature: AppFeature.inventory,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: Navigator.canPop(context)
-            ? AppBar(title: const Text('Inventory'))
-            : null,
+        appBar: widget.isTab ? null : AppBar(title: const Text('Inventory')),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: Center(

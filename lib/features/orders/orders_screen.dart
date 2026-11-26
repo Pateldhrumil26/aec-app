@@ -7,9 +7,11 @@ import '../../providers/aeconnect_provider.dart';
 import '../../components/module_banner.dart';
 import '../../components/app_search_bar.dart';
 import 'order_detail_screen.dart';
+import 'order_form_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
-  const OrdersScreen({super.key});
+  final bool isTab;
+  const OrdersScreen({super.key, this.isTab = false});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
@@ -66,9 +68,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: Navigator.canPop(context)
-          ? AppBar(title: const Text('Orders'))
-          : null,
+      appBar: widget.isTab ? null : AppBar(title: const Text('Sales Orders')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Center(
@@ -77,7 +77,32 @@ class _OrdersScreenState extends State<OrdersScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Order Book Hero Banner
+                // 1. Page Header (Title + '+' button)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Sales Orders',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: AppColors.navy,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrderFormScreen()),
+                      ),
+                      icon: const Icon(Icons.add, size: 24, color: AppColors.navy),
+                      tooltip: 'New order',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+
+                // 2. Order Book Hero Banner
                 ModuleBanner(
                   label: 'ORDER BOOK',
                   title: '${activeOrders.length} active order${activeOrders.length == 1 ? "" : "s"}',

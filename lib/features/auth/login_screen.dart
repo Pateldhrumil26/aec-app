@@ -86,14 +86,21 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Visual Waves Banner matching prototype
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      'assets/photography/auth-network-waves.png',
-                      height: 110,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                  // Visual Waves Banner matching prototype with cyan bottom accent line
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Color(0xFF00A9DA), width: 2),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                      child: Image.asset(
+                        'assets/photography/auth-network-waves.png',
+                        height: 110,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -119,30 +126,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.accent.withValues(alpha: 0.4)),
+                          color: const Color(0xFFEAF6FC),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          'Employee portal',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
+                        child: Text(
+                          _selectedRole == UserRole.manager
+                              ? 'Manager portal'
+                              : _selectedRole == UserRole.warehouse
+                                  ? 'Warehouse portal'
+                                  : 'Employee portal',
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF08769C),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 22),
 
-                  // 3-Role Segmented Selector Tabs matching screenshot
+                  // 3-Role Segmented Selector Tabs matching prototype
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF02587A), // Deep teal container
-                      borderRadius: BorderRadius.circular(6),
+                      color: const Color(0xFF036E97),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: const Color(0xFFDCE6EC)),
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: Row(
@@ -191,18 +202,21 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : const Color(0xFF02587A),
-            border: isSelected
-                ? const Border(bottom: BorderSide(color: AppColors.accent, width: 3))
-                : null,
+            color: isSelected ? const Color(0xFFF0F9FD) : const Color(0xFF036E97),
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? const Color(0xFF00A9DA) : Colors.transparent,
+                width: 3,
+              ),
+            ),
           ),
           child: Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-              color: isSelected ? AppColors.primary : Colors.white70,
+              fontSize: 11.5,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+              color: isSelected ? const Color(0xFF036E97) : Colors.white.withValues(alpha: 0.85),
             ),
           ),
         ),
@@ -364,15 +378,30 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildHelperBox(String text) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0FDF4).withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
+        color: const Color(0xFFF4F9FC),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              bottom: 0,
+              left: 0,
+              child: Container(width: 3, color: const Color(0xFF00A9DA)),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 11.5, color: Color(0xFF626E79), height: 1.45),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
