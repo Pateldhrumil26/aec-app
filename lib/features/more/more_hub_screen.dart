@@ -7,7 +7,9 @@ import '../quotations/quotations_screen.dart';
 import '../orders/orders_screen.dart';
 import '../collections/collections_screen.dart';
 import '../moms/moms_screen.dart';
+import '../inventory/inventory_screen.dart';
 import '../customers/customers_screen.dart';
+import '../customers/contacts_screen.dart';
 import '../ess/ess_screen.dart';
 import '../search/global_search_screen.dart';
 import '../notifications/notifications_screen.dart';
@@ -24,235 +26,272 @@ class MoreHubScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Page Head: Title
-            const Text(
-              'More',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-                color: AppColors.navy,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Group 1: Workspace
-            _buildGroupSection(
-              title: 'Workspace',
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNavItem(
-                  icon: Icons.people_outline_rounded,
-                  iconColor: const Color(0xFF0284C7),
-                  title: 'Leads',
-                  onTap: () => provider.setTabIndex(1),
+                // Page Head: Title
+                const Text(
+                  'More',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.6,
+                    color: AppColors.navy,
+                  ),
                 ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.location_on_outlined,
-                  iconColor: AppColors.teal,
-                  title: 'Field visits',
-                  onTap: () => provider.setTabIndex(2),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.task_alt_rounded,
-                  iconColor: AppColors.amber,
-                  title: 'Tasks & follow-ups',
-                  onTap: () => provider.setTabIndex(3),
-                ),
+                const SizedBox(height: 18),
+
+                // Group 1: Workspace
+                _buildGroupHeader('Workspace'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.people_alt_rounded,
+                    iconBg: const Color(0xFFE5F5F0),
+                    iconColor: const Color(0xFF128D7E),
+                    title: 'Leads',
+                    onTap: () => provider.setTabIndex(1),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.location_on_rounded,
+                    iconBg: const Color(0xFFFFF0DF),
+                    iconColor: const Color(0xFFC26319),
+                    title: 'Field visits',
+                    onTap: () => provider.setTabIndex(2),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.task_alt_rounded,
+                    iconBg: const Color(0xFFFBF5EA),
+                    iconColor: const Color(0xFF935817),
+                    title: 'Tasks & follow-ups',
+                    onTap: () => provider.setTabIndex(3),
+                  ),
+                ]),
+                const SizedBox(height: 20),
+
+                // Group 2: Relationships
+                _buildGroupHeader('Relationships'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.business_center_rounded,
+                    iconBg: const Color(0xFFE4F3F8),
+                    iconColor: const Color(0xFF087F9D),
+                    title: 'Customers',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CustomersScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.person_rounded,
+                    iconBg: const Color(0xFFE4F3F8),
+                    iconColor: const Color(0xFF087F9D),
+                    title: 'Contacts',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ContactsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.bar_chart_rounded,
+                    iconBg: const Color(0xFFF0EAFA),
+                    iconColor: const Color(0xFF7061CE),
+                    title: 'Opportunities',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PipelineScreen()),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 20),
+
+                // Group 3: Commercial
+                _buildGroupHeader('Commercial'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.description_rounded,
+                    iconBg: const Color(0xFFFAEFF7),
+                    iconColor: const Color(0xFFB15B9A),
+                    title: 'Meetings / MOM',
+                    badge: '1',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MomsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.description_rounded,
+                    iconBg: const Color(0xFFFAEFF7),
+                    iconColor: const Color(0xFFB15B9A),
+                    title: 'Quotations',
+                    badge: '3',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const QuotationsScreen()),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 20),
+
+                // Group 4: Operations
+                _buildGroupHeader('Operations'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.local_shipping_rounded,
+                    iconBg: const Color(0xFFE6F6EE),
+                    iconColor: const Color(0xFF178E74),
+                    title: 'Sales orders',
+                    badge: '1',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.insert_chart_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: const Color(0xFF2466DF),
+                    title: 'Collections',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CollectionsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.inventory_2_rounded,
+                    iconBg: const Color(0xFFE6F6EE),
+                    iconColor: const Color(0xFF178E74),
+                    title: 'Inventory',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const InventoryScreen()),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 20),
+
+                // Group 5: Personal
+                _buildGroupHeader('Personal'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.person_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: AppColors.primary,
+                    title: 'Employee self-service',
+                    badge: '6',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.calendar_month_rounded,
+                    iconBg: const Color(0xFFF3ECFB),
+                    iconColor: const Color(0xFF8B5CF6),
+                    title: 'Leave requests',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.work_outline_rounded,
+                    iconBg: const Color(0xFFFFF3DD),
+                    iconColor: const Color(0xFFB45309),
+                    title: 'Expense claims',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 20),
+
+                // Group 6: Account
+                _buildGroupHeader('Account'),
+                _buildGroupContainer([
+                  _buildNavItem(
+                    icon: Icons.notifications_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: AppColors.primary,
+                    title: 'Notifications',
+                    badge: '2',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.search_rounded,
+                    iconBg: const Color(0xFFF1F3F5),
+                    iconColor: const Color(0xFF526680),
+                    title: 'Search',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+                    ),
+                  ),
+                  _buildDivider(),
+                  _buildNavItem(
+                    icon: Icons.account_circle_rounded,
+                    iconBg: const Color(0xFFEAF1FF),
+                    iconColor: AppColors.primary,
+                    title: 'My profile',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 80),
               ],
             ),
-            const SizedBox(height: 18),
-
-            // Group 2: Relationships
-            _buildGroupSection(
-              title: 'Relationships',
-              children: [
-                _buildNavItem(
-                  icon: Icons.business_outlined,
-                  iconColor: const Color(0xFF0284C7),
-                  title: 'Customers',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CustomersScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.contacts_outlined,
-                  iconColor: const Color(0xFF087FC2),
-                  title: 'Contacts',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CustomersScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.filter_alt_outlined,
-                  iconColor: const Color(0xFF7E22CE),
-                  title: 'Opportunities',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const PipelineScreen()),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-
-            // Group 3: Commercial
-            _buildGroupSection(
-              title: 'Commercial',
-              children: [
-                _buildNavItem(
-                  icon: Icons.assignment_outlined,
-                  iconColor: const Color(0xFF4D9693),
-                  title: 'Meetings / MOM',
-                  badge: '1',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MomsScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.description_outlined,
-                  iconColor: const Color(0xFF3A82BC),
-                  title: 'Quotations',
-                  badge: '2',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const QuotationsScreen()),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-
-            // Group 4: Operations
-            _buildGroupSection(
-              title: 'Operations',
-              children: [
-                _buildNavItem(
-                  icon: Icons.local_shipping_outlined,
-                  iconColor: const Color(0xFF5B79AB),
-                  title: 'Sales orders',
-                  badge: '1',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const OrdersScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.account_balance_wallet_outlined,
-                  iconColor: const Color(0xFFEA580C),
-                  title: 'Collections',
-                  badge: '16',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CollectionsScreen()),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-
-            // Group 5: Personal
-            _buildGroupSection(
-              title: 'Personal',
-              children: [
-                _buildNavItem(
-                  icon: Icons.badge_outlined,
-                  iconColor: const Color(0xFF0284C7),
-                  title: 'Employee self-service',
-                  badge: '6',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const EssScreen()),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-
-            // Group 6: Account
-            _buildGroupSection(
-              title: 'Account',
-              children: [
-                _buildNavItem(
-                  icon: Icons.notifications_none_rounded,
-                  iconColor: const Color(0xFF0369A1),
-                  title: 'Notifications',
-                  badge: '2',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.search_rounded,
-                  iconColor: AppColors.textMuted,
-                  title: 'Search',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
-                  ),
-                ),
-                _buildDivider(),
-                _buildNavItem(
-                  icon: Icons.person_outline_rounded,
-                  iconColor: const Color(0xFF0284C7),
-                  title: 'My profile',
-                  badge: '6',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildGroupSection({required String title, required List<Widget> children}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: AppColors.navy,
-          ),
+  Widget _buildGroupHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF62748C),
         ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            children: children,
-          ),
-        ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildGroupContainer(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(children: children),
     );
   }
 
   Widget _buildNavItem({
     required IconData icon,
+    required Color iconBg,
     required Color iconColor,
     required String title,
     String? badge,
@@ -260,54 +299,57 @@ class MoreHubScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 13.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
         child: Row(
           children: [
+            // Icon in soft colored box
             Container(
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
+                color: iconBg,
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, size: 18, color: iconColor),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
+
+            // Title
             Expanded(
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 13.5,
                   fontWeight: FontWeight.w600,
                   color: AppColors.navy,
                 ),
               ),
             ),
+
+            // Badge Pill (if any)
             if (badge != null) ...[
               Container(
+                margin: const EdgeInsets.only(right: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.amberLight,
+                  color: const Color(0xFFFFF3DD),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   badge,
                   style: const TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.amber,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF946419),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
             ],
-            const Icon(
-              Icons.chevron_right_rounded,
-              size: 18,
-              color: AppColors.textLight,
-            ),
+
+            // Chevron
+            const Icon(Icons.chevron_right, size: 18, color: Color(0xFFB4BFCD)),
           ],
         ),
       ),
@@ -315,6 +357,11 @@ class MoreHubScreen extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return const Divider(height: 1, color: AppColors.border);
+    return const Divider(
+      height: 1,
+      thickness: 1,
+      indent: 62,
+      color: Color(0xFFEDF0F5),
+    );
   }
 }

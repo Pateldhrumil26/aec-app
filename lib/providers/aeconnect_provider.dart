@@ -8,6 +8,7 @@ import '../models/quotation_model.dart';
 import '../models/order_model.dart';
 import '../models/mom_model.dart';
 import '../models/customer_model.dart';
+import '../models/notification_model.dart';
 
 class AEConnectProvider extends ChangeNotifier {
   // Authentication & Role State
@@ -503,47 +504,146 @@ class AEConnectProvider extends ChangeNotifier {
   // --- CUSTOMERS & CONTACTS ---
   final List<CustomerModel> _customers = [
     const CustomerModel(
-      id: 'CUST-001',
+      id: 'c1',
       name: 'Acme Technologies',
+      leadId: 'l1',
       category: 'Telecom / ISP',
       city: 'Noida',
       state: 'Uttar Pradesh',
-      outstandingAmount: 850000,
-      creditLimit: 2500000,
-      openQuotesCount: 1,
-      activeOrdersCount: 1,
-      keyContact: 'Rajesh Sharma',
+      gst: '09AAAAA0000A1Z5',
+      address: 'Sector 62, Electronic City, Noida',
+      accountOwner: 'John Doe',
+      asmName: 'Priya Mehta',
+      terms: '100% Advance',
+      kycStatus: 'Verified',
+      status: 'Active',
+      outstandingAmount: 246572.80,
+      creditLimit: 200000,
+      keyContact: 'Rahul Sharma',
       phone: '+91 98765 43210',
+      email: 'rahul.sharma@acme.example',
     ),
     const CustomerModel(
-      id: 'CUST-002',
-      name: 'Bharat Infotech Solutions',
+      id: 'c2',
+      name: 'Bright Infra Solutions',
+      leadId: 'l2',
       category: 'System Integrator',
       city: 'Ahmedabad',
       state: 'Gujarat',
-      outstandingAmount: 420000,
-      creditLimit: 1500000,
-      openQuotesCount: 1,
-      activeOrdersCount: 0,
+      gst: '24BBBBB0000B1Z5',
+      address: 'SG Highway, Ahmedabad',
+      accountOwner: 'John Doe',
+      asmName: 'Priya Mehta',
+      terms: '100% Advance',
+      kycStatus: 'Pending Review',
+      status: 'Active',
+      outstandingAmount: 79650,
+      creditLimit: 0,
       keyContact: 'Amit Patel',
       phone: '+91 98220 11223',
+      email: 'amit@brightinfra.example',
     ),
     const CustomerModel(
-      id: 'CUST-003',
-      name: 'CyberNet Fiber Systems',
-      category: 'ISP / Contractor',
-      city: 'Pune',
-      state: 'Maharashtra',
-      outstandingAmount: 1434518.70,
-      creditLimit: 2000000,
-      openQuotesCount: 0,
-      activeOrdersCount: 0,
+      id: 'c3',
+      name: 'CityNet Communications',
+      leadId: 'l3',
+      category: 'Broadband / ISP',
+      city: 'Surat',
+      state: 'Gujarat',
+      gst: '24CCCC0000C1Z5',
+      address: 'Ring Road, Surat',
+      accountOwner: 'John Doe',
+      asmName: 'Priya Mehta',
+      terms: '100% Advance',
+      kycStatus: 'Pending Review',
+      status: 'Active',
+      outstandingAmount: 33984,
+      creditLimit: 0,
       keyContact: 'Kiran Deshmukh',
       phone: '+91 94230 77881',
+      email: 'kiran@citynet.example',
+    ),
+    const CustomerModel(
+      id: 'c4',
+      name: 'Grand Telecom Infra',
+      leadId: 'l4',
+      category: 'EPC Contractor',
+      city: 'Vadodara',
+      state: 'Gujarat',
+      gst: '24DDDDD0000D1Z5',
+      address: 'Alkapuri, Vadodara',
+      accountOwner: 'John Doe',
+      asmName: 'Priya Mehta',
+      terms: '100% Advance',
+      kycStatus: 'Pending Review',
+      status: 'Active',
+      outstandingAmount: 23895,
+      creditLimit: 0,
+      keyContact: 'Manoj Joshi',
+      phone: '+91 98980 44556',
+      email: 'manoj@grandtelecom.example',
     ),
   ];
 
   List<CustomerModel> get customers => List.unmodifiable(_customers);
+
+  // --- NOTIFICATIONS ---
+  final List<NotificationModel> _notifications = [
+    NotificationModel(
+      id: 'n1',
+      title: 'Invoice due soon',
+      text: 'DEMO-INV-002 · ₹2,46,572.80 pending · due 29 Nov 2026',
+      at: DateTime(2026, 11, 26, 9, 27),
+      isRead: false,
+      page: 'collections',
+      recordId: 'DEMO-INV-002',
+    ),
+    NotificationModel(
+      id: 'n2',
+      title: 'Invoice overdue',
+      text: 'DEMO-INV-EMP104-opening-31 · ₹79,650 pending · due 10 Oct 2026',
+      at: DateTime(2026, 11, 24, 11, 8),
+      isRead: true,
+      page: 'collections',
+      recordId: 'DEMO-INV-EMP104-opening-31',
+    ),
+    NotificationModel(
+      id: 'n3',
+      title: 'Invoice overdue',
+      text: 'DEMO-INV-EMP104-opening-61 · ₹33,984 pending · due 3 Jul 2026',
+      at: DateTime(2026, 11, 24, 11, 8),
+      isRead: true,
+      page: 'collections',
+      recordId: 'DEMO-INV-EMP104-opening-61',
+    ),
+    NotificationModel(
+      id: 'n4',
+      title: 'Awaiting cheque clearance',
+      text: 'DEMO-INV-EMP104-2026-11-5 · ₹23,895 · cheque DEMO-emp104-2026-11-5-cheque',
+      at: DateTime(2026, 11, 24, 11, 8),
+      isRead: true,
+      page: 'collections',
+      recordId: 'DEMO-INV-EMP104-2026-11-5',
+    ),
+  ];
+
+  List<NotificationModel> get notifications => List.unmodifiable(_notifications);
+  int get unreadNotificationsCount => _notifications.where((n) => !n.isRead).length;
+
+  void markAllNotificationsRead() {
+    for (int i = 0; i < _notifications.length; i++) {
+      _notifications[i] = _notifications[i].copyWith(isRead: true);
+    }
+    notifyListeners();
+  }
+
+  void markNotificationRead(String id) {
+    final idx = _notifications.indexWhere((n) => n.id == id);
+    if (idx != -1) {
+      _notifications[idx] = _notifications[idx].copyWith(isRead: true);
+      notifyListeners();
+    }
+  }
 
   // --- EMPLOYEE SELF SERVICE (ESS) ---
   bool _isPunchedIn = false;
