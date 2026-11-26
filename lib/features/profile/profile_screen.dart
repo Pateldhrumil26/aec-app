@@ -4,6 +4,10 @@ import '../../core/constants/app_colors.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../auth/login_screen.dart';
 import '../ess/ess_screen.dart';
+import '../ess/leaves_screen.dart';
+import '../ess/expenses_screen.dart';
+import '../ess/hr_reviews_screen.dart';
+import '../team/team_performance_screen.dart';
 import '../notifications/notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -237,7 +241,7 @@ class ProfileScreen extends StatelessWidget {
                     title: 'Leave requests',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                      MaterialPageRoute(builder: (_) => const LeavesScreen()),
                     ),
                   ),
                   const Divider(height: 1, color: AppColors.border),
@@ -248,7 +252,7 @@ class ProfileScreen extends StatelessWidget {
                     title: 'Expense claims',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                      MaterialPageRoute(builder: (_) => const ExpensesScreen()),
                     ),
                   ),
                   const Divider(height: 1, color: AppColors.border),
@@ -269,11 +273,10 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.shield_outlined,
                     iconColor: const Color(0xFF059669),
                     title: 'HR reviews',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('HR reviews up to date.')),
-                      );
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HrReviewsScreen()),
+                    ),
                   ),
                   const Divider(height: 1, color: AppColors.border),
                   _buildListTile(
@@ -282,11 +285,10 @@ class ProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF0284C7),
                     title: 'Team performance',
                     badge: '2',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Team performance overview.')),
-                      );
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
+                    ),
                   ),
                 ],
               ),

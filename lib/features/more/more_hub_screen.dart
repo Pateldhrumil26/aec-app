@@ -11,6 +11,8 @@ import '../inventory/inventory_screen.dart';
 import '../customers/customers_screen.dart';
 import '../customers/contacts_screen.dart';
 import '../ess/ess_screen.dart';
+import '../ess/leaves_screen.dart';
+import '../ess/expenses_screen.dart';
 import '../search/global_search_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../profile/profile_screen.dart';
@@ -201,7 +203,7 @@ class MoreHubScreen extends StatelessWidget {
                     title: 'Leave requests',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                      MaterialPageRoute(builder: (_) => const LeavesScreen()),
                     ),
                   ),
                   _buildDivider(),
@@ -212,7 +214,7 @@ class MoreHubScreen extends StatelessWidget {
                     title: 'Expense claims',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const EssScreen()),
+                      MaterialPageRoute(builder: (_) => const ExpensesScreen()),
                     ),
                   ),
                 ]),
