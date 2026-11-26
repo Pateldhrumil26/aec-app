@@ -366,20 +366,23 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // 4. Hero Card (.collection-hero - Exact replica of media_1795671789900_971a0377.jpg)
+              // 4. Hero Card (.collection-hero - with authentic network cables background)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0F1E36), Color(0xFF13324C), Color(0xFF164761)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                  image: const DecorationImage(
+                    image: AssetImage('assets/photography/banner-network-v1.jpg'),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Color(0x990D223A),
+                      BlendMode.srcOver,
+                    ),
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF102D4C).withValues(alpha: 0.12),
+                      color: const Color(0xFF102D4C).withValues(alpha: 0.15),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
