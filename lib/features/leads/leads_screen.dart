@@ -1,177 +1,203 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/utils/app_formatters.dart';
 import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
-import '../../components/status_pill.dart';
 import 'lead_detail_screen.dart';
 import 'lead_form_screen.dart';
-import '../pipeline/pipeline_screen.dart';
 
-class LeadsScreen extends StatelessWidget {
+class LeadsScreen extends StatefulWidget {
   const LeadsScreen({super.key});
+
+  @override
+  State<LeadsScreen> createState() => _LeadsScreenState();
+}
+
+class _LeadsScreenState extends State<LeadsScreen> {
+  String _selectedStage = 'All';
+  String _searchQuery = '';
+  String _sortOption = 'Newest first';
+
+  final List<String> _stages = [
+    'All',
+    'New',
+    'Qualification',
+    'Contacted',
+    'Qualified',
+    'Discovery',
+    'Proposal',
+    'Negotiation',
+    'Closed Won',
+    'Closed Lost',
+  ];
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AEConnectProvider>();
-    final leads = provider.filteredLeads;
+    final allLeads = provider.leads;
+
+    final filtered = allLeads.where((lead) {
+      if (_searchQuery.trim().isNotEmpty) {
+        final q = _searchQuery.toLowerCase();
+        final matchesCompany = lead.companyName.toLowerCase().contains(q);
+        final matchesContact = lead.contactPerson.toLowerCase().contains(q);
+        final matchesCity = lead.city.toLowerCase().contains(q);
+        if (!matchesCompany && !matchesContact && !matchesCity) return false;
+      }
+
+      if (_selectedStage != 'All') {
+        if (lead.stage.label != _selectedStage) return false;
+      }
+      return true;
+    }).toList();
+
+    if (_sortOption == 'Newest first') {
+      filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    } else if (_sortOption == 'Oldest first') {
+      filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    } else if (_sortOption == 'Name / reference') {
+      filtered.sort((a, b) => a.companyName.compareTo(b.companyName));
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Page Head: Title + New lead
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Leads',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.5,
-                          color: AppColors.navy,
-                        ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Title & New Lead Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Leads',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.6,
+                        color: AppColors.navy,
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LeadFormScreen()),
-                          );
-                        },
-                        icon: const Icon(Icons.add, size: 16),
-                        label: const Text('New lead'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                          minimumSize: const Size(0, 40),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Overview Banner (.banner-kpi in prototype)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.border),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 3,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF5D9AAD),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LeadFormScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.add, size: 16),
+                      label: const Text('New lead'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF08897A),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 38),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                // Search & Filter Toolbar
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'CLIENT RELATIONSHIPS',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF7E8B96),
-                                    letterSpacing: 1.1,
-                                  ),
+                            const Icon(Icons.search, size: 20, color: Color(0xFF8A98AC)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                onChanged: (val) => setState(() => _searchQuery = val),
+                                decoration: const InputDecoration(
+                                  hintText: 'Search company, contact or city',
+                                  hintStyle: TextStyle(fontSize: 13.5, color: Color(0xFF8A98AC)),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${provider.leads.length} open leads · 1 in negotiation',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.navy,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const PipelineScreen()),
-                                );
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.primary,
-                                side: const BorderSide(color: AppColors.primary),
-                                minimumSize: const Size(0, 36),
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                style: const TextStyle(fontSize: 13.5, color: AppColors.textPrimary),
                               ),
-                              child: const Text('View pipeline', style: TextStyle(fontSize: 12)),
                             ),
+                            if (_searchQuery.isNotEmpty)
+                              GestureDetector(
+                                onTap: () => setState(() => _searchQuery = ''),
+                                child: const Icon(Icons.clear, size: 16, color: AppColors.textLight),
+                              ),
                           ],
                         ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // Filter / Options button
+                    PopupMenuButton<String>(
+                      initialValue: _sortOption,
+                      tooltip: 'Sort options',
+                      onSelected: (val) => setState(() => _sortOption = val),
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(value: 'Newest first', child: Text('Sort by: Newest first')),
+                        const PopupMenuItem(value: 'Oldest first', child: Text('Sort by: Oldest first')),
+                        const PopupMenuItem(value: 'Name / reference', child: Text('Sort by: Name / reference')),
                       ],
+                      child: Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.more_vert, size: 20, color: AppColors.textSecondary),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
+                  ],
+                ),
+                const SizedBox(height: 14),
 
-                  // Search Bar
-                  TextField(
-                    onChanged: (v) => provider.setLeadSearchQuery(v),
-                    decoration: InputDecoration(
-                      hintText: 'Search leads by company, person, city...',
-                      prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.textMuted),
-                      suffixIcon: provider.leadSearchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 18),
-                              onPressed: () => provider.setLeadSearchQuery(''),
-                            )
-                          : null,
-                    ),
+                // Segmented Tabs
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: AppColors.border)),
                   ),
-                  const SizedBox(height: 12),
-
-                  // Horizontal Stage Filter Chips
-                  SingleChildScrollView(
+                  child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: LeadStage.values.map((stage) {
-                        final isSelected = provider.leadStageFilter == stage;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 6.0),
-                          child: InkWell(
-                            onTap: () => provider.setLeadStageFilter(stage),
-                            borderRadius: BorderRadius.circular(6),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primaryLight : Colors.white,
-                                border: Border.all(
-                                  color: isSelected ? AppColors.primary : AppColors.border,
+                      children: _stages.map((stage) {
+                        final isSelected = _selectedStage == stage;
+                        return InkWell(
+                          onTap: () => setState(() => _selectedStage = stage),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: isSelected ? const Color(0xFF08897A) : Colors.transparent,
+                                  width: 2,
                                 ),
-                                borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text(
-                                stage.label,
-                                style: TextStyle(
-                                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  fontSize: 11,
-                                ),
+                            ),
+                            child: Text(
+                              stage,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                color: isSelected ? const Color(0xFF08897A) : const Color(0xFF7A8798),
                               ),
                             ),
                           ),
@@ -179,128 +205,220 @@ class LeadsScreen extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 16),
 
-                  Text(
-                    '${leads.length} records · Showing all',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Lead Cards List (.record-results)
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final lead = leads[index];
-                  final initials = lead.companyName.split(' ').map((n) => n.isNotEmpty ? n[0] : '').take(2).join();
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
+                // Leads Cards List
+                if (filtered.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 40.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.border),
-                    ),
-                    child: InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LeadDetailScreen(leadId: lead.id),
+                    ),
+                    child: const Center(
+                      child: Column(
+                        children: [
+                          Icon(Icons.people_outline, size: 36, color: Color(0xFF8A98AC)),
+                          SizedBox(height: 10),
+                          Text(
+                            'No leads found',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.navy,
+                            ),
                           ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(14.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryLight,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      initials,
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w800,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        lead.companyName,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.navy,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        '${lead.contactPerson} · ${lead.city}',
-                                        style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                StatusPill(label: lead.stage.label),
-                              ],
-                            ),
-                            const Divider(height: 18, color: AppColors.border),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Est. Value: ${AppFormatters.currency(lead.estimatedValue)}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.navy,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Updated ${AppFormatters.date(lead.createdAt)}',
-                                      style: const TextStyle(fontSize: 11, color: AppColors.textLight),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    const Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.textLight),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                          SizedBox(height: 4),
+                          Text(
+                            'Try another search or filter, or create a new lead.',
+                            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtered.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final lead = filtered[index];
+                      return _buildLeadCard(context, lead);
+                    },
+                  ),
+                const SizedBox(height: 80),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLeadCard(BuildContext context, LeadModel lead) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => LeadDetailScreen(lead: lead)),
+        );
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Row: Avatar Box + Company Name & City + Chevron
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Initials Avatar Box
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE5F5F0),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(
+                    child: Text(
+                      lead.initials,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF08897A),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Company Name & Industry / City, State
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        lead.companyName,
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.navy,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${lead.industry} · ${lead.city}, ${lead.state}',
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFF62748C),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Icon(Icons.chevron_right, size: 18, color: Color(0xFFB4BFCD)),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Middle Row: Account Owner & Lead Source
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFE5F5F0),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'JD',
+                          style: TextStyle(
+                            fontSize: 8.5,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF08897A),
+                          ),
                         ),
                       ),
                     ),
-                  );
-                },
-                childCount: leads.length,
-              ),
+                    Text(
+                      lead.salesRep,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.navy,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '·  ${lead.source}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF62748C),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Stage Badge
+                _buildStageBadge(lead.stage),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStageBadge(LeadStage stage) {
+    Color bg = const Color(0xFFEAF1FF);
+    Color fg = const Color(0xFF3168B8);
+
+    if (stage == LeadStage.proposal || stage == LeadStage.qualified) {
+      bg = const Color(0xFFEAF5EE);
+      fg = const Color(0xFF2D7854);
+    } else if (stage == LeadStage.discovery || stage == LeadStage.qualification) {
+      bg = const Color(0xFFFFF3DD);
+      fg = const Color(0xFF946419);
+    } else if (stage == LeadStage.closedWon) {
+      bg = const Color(0xFFE6F6EE);
+      fg = const Color(0xFF15803D);
+    } else if (stage == LeadStage.closedLost) {
+      bg = const Color(0xFFFCECEF);
+      fg = const Color(0xFFAC4353);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        stage.label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: fg,
+        ),
       ),
     );
   }
