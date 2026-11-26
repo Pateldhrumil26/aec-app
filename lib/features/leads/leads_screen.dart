@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/lead_model.dart';
 import '../../providers/aeconnect_provider.dart';
+import '../../components/module_banner.dart';
+import '../pipeline/pipeline_screen.dart';
 import 'lead_detail_screen.dart';
 import 'lead_form_screen.dart';
 
@@ -102,6 +104,22 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 16),
+
+                // Hero Banner matching prototype
+                ModuleBanner(
+                  label: 'CLIENT RELATIONSHIPS',
+                  title: '${allLeads.length} open leads',
+                  description:
+                      '${allLeads.where((l) => l.stage == LeadStage.negotiation).length} in negotiation',
+                  image: 'assets/photography/banner-network-v1.jpg',
+                  actionLabel: 'View pipeline',
+                  actionIcon: Icons.analytics_outlined,
+                  onAction: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PipelineScreen()),
+                  ),
                 ),
                 const SizedBox(height: 18),
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/aeconnect_provider.dart';
+import '../../components/module_banner.dart';
 import '../auth/login_screen.dart';
 import '../ess/ess_screen.dart';
 import '../ess/leaves_screen.dart';
@@ -37,6 +38,15 @@ class ProfileScreen extends StatelessWidget {
                 letterSpacing: -0.5,
                 color: AppColors.navy,
               ),
+            ),
+            const SizedBox(height: 16),
+
+            // Hero Banner matching prototype
+            ModuleBanner(
+              label: 'MY ACCOUNT',
+              title: user.name,
+              description: '${user.id.toUpperCase()} · ${user.designation}',
+              image: 'assets/photography/banner-workday-v1.jpg',
             ),
             const SizedBox(height: 16),
 

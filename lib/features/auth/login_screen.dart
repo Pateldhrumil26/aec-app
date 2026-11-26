@@ -86,6 +86,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Visual Waves Banner matching prototype
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/photography/auth-network-waves.png',
+                      height: 110,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
                   // Top Brand Header with Portal Tag matching design
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

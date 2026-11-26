@@ -72,6 +72,18 @@ class _OtpScreenState extends State<OtpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Visual Waves Banner matching prototype
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/photography/auth-network-waves.png',
+                      height: 90,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
                   // Toast reminder banner
                   Container(
                     width: double.infinity,

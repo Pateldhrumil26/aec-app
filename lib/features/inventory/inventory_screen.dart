@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../components/module_banner.dart';
+import '../orders/orders_screen.dart';
 import 'product_stock_detail_screen.dart';
 import 'inward_qc_detail_screen.dart';
 
@@ -108,6 +110,20 @@ class _InventoryScreenState extends State<InventoryScreen> with SingleTickerProv
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        ModuleBanner(
+          label: 'STOCK CONTROL',
+          title: 'Stock is available',
+          description: '1 low-stock products · 4 active SKUs',
+          image: 'assets/photography/banner-warehouse-v1.jpg',
+          actionLabel: 'Sales orders',
+          actionIcon: Icons.local_shipping_outlined,
+          onAction: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const OrdersScreen()),
+          ),
+        ),
+        const SizedBox(height: 14),
+
         // Formula Banner
         Container(
           padding: const EdgeInsets.all(12),

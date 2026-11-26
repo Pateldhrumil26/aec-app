@@ -5,6 +5,7 @@ import '../../core/utils/app_formatters.dart';
 import '../../models/order_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
+import '../../components/module_banner.dart';
 import 'order_detail_screen.dart';
 import 'order_form_screen.dart';
 
@@ -47,6 +48,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+            child: ModuleBanner(
+              label: 'ORDER BOOK',
+              title: '${allOrders.length} active orders',
+              description:
+                  '${allOrders.where((o) => o.status == OrderStatus.inTransit).length} in transit · ${allOrders.where((o) => o.status == OrderStatus.awaitingStock).length} ready to pack',
+              image: 'assets/photography/banner-warehouse-v1.jpg',
+            ),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: const BoxDecoration(

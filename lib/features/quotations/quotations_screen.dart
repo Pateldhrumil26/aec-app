@@ -5,6 +5,7 @@ import '../../core/utils/app_formatters.dart';
 import '../../models/quotation_model.dart';
 import '../../providers/aeconnect_provider.dart';
 import '../../components/status_pill.dart';
+import '../../components/module_banner.dart';
 import 'quotation_detail_screen.dart';
 import 'quotation_builder_screen.dart';
 
@@ -54,6 +55,17 @@ class _QuotationsScreenState extends State<QuotationsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Hero Banner matching prototype
+                  ModuleBanner(
+                    label: 'QUOTATION DESK',
+                    title: AppFormatters.rupee(
+                        allQuotes.fold<double>(0.0, (sum, q) => sum + q.grandTotal)),
+                    description:
+                        '${allQuotes.length} open quotations · ${allQuotes.where((q) => q.status == QuotationStatus.underReview).length} under review',
+                    image: 'assets/photography/banner-network-v1.jpg',
+                  ),
+                  const SizedBox(height: 16),
+
                   // Segmented Tabs: Underlined Text Tabs
                   Container(
                     decoration: const BoxDecoration(

@@ -5,6 +5,8 @@ import '../../core/constants/app_colors.dart';
 import '../../models/user_role.dart';
 import '../../models/order_model.dart';
 import '../../providers/aeconnect_provider.dart';
+import '../../components/module_banner.dart';
+import '../team/team_performance_screen.dart';
 import '../leads/lead_form_screen.dart';
 import '../visits/visit_form_screen.dart';
 import '../visits/active_visit_screen.dart';
@@ -92,66 +94,18 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // 2. Banner KPI Hero (.banner-kpi in prototype)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 3,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5D9AAD),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'AE CONNECT / SALES',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                    color: Color(0xFF7E8B96),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Hello, John.',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.navy,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${tasks.length} follow-ups due · ${orders.where((o) => o.status != OrderStatus.delivered).length} active order',
-                  style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-                ),
-                const SizedBox(height: 14),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const VisitFormScreen()),
-                  ),
-                  icon: const Icon(Icons.location_on_outlined, size: 16),
-                  label: const Text('Log a visit'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
-                    minimumSize: const Size(0, 38),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  ),
-                ),
-              ],
+          // 2. Banner KPI Hero (With authentic network background image)
+          ModuleBanner(
+            label: 'AE CONNECT / SALES',
+            title: 'Hello, John.',
+            description:
+                '${tasks.length} follow-ups due · ${orders.where((o) => o.status != OrderStatus.delivered).length} active order',
+            image: 'assets/photography/banner-network-v1.jpg',
+            actionLabel: 'Log a visit',
+            actionIcon: Icons.location_on_outlined,
+            onAction: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const VisitFormScreen()),
             ),
           ),
           const SizedBox(height: 14),
@@ -722,65 +676,186 @@ class HomeScreen extends StatelessWidget {
   // ==========================================
   Widget _buildManagerDashboard(BuildContext context, AEConnectProvider provider) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Manager overview', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.navy)),
-                  Text('Priya’s team desk', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                  const Text('Manager overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.5, color: AppColors.navy)),
+                  const SizedBox(height: 2),
+                  Text(DateFormat('d MMM yyyy').format(DateTime.now()), style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
                 ],
               ),
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuotationsScreen())),
-                icon: const Icon(Icons.rate_review_outlined, size: 16),
+                icon: const Icon(Icons.verified_user_outlined, size: 16),
                 label: const Text('Review queue'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  minimumSize: const Size(0, 40),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          // Team KPIs
+
+          // Hero Banner with Network photo background
+          ModuleBanner(
+            label: 'AE CONNECT / TEAM',
+            title: 'Priya’s team desk',
+            description: '2 quotations awaiting review · 1 active orders',
+            image: 'assets/photography/banner-network-v1.jpg',
+            actionLabel: 'View team leads',
+            actionIcon: Icons.people_outline,
+            onAction: () => provider.setTabIndex(1),
+          ),
+          const SizedBox(height: 20),
+
+          // Team performance Section matching Image 2
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Team performance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.navy)),
+                  const SizedBox(height: 2),
+                  Text('${DateFormat('MMMM yyyy').format(DateTime.now())} · 2 salespeople', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                ],
+              ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TeamPerformanceScreen()),
+                ),
+                icon: const Icon(Icons.bar_chart_outlined, size: 15),
+                label: const Text('Full team report'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.border),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  minimumSize: const Size(0, 36),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Hint box
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              'Illustrative team data · 3 months · Sample targets are editable',
+              style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Month & Rank filters
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                const Text('Team performance · November 2026', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Collection due', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        SizedBox(height: 2),
-                        Text('₹33,02,589.90', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.navy)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Target achieved', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        SizedBox(height: 2),
-                        Text('82%', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.teal)),
-                      ],
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Report month *', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                      const SizedBox(height: 6),
+                      Container(
+                        height: 42,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(DateFormat('MMMM yyyy').format(DateTime.now()), style: const TextStyle(fontSize: 13, color: AppColors.textPrimary)),
+                            const Icon(Icons.calendar_today_outlined, size: 15, color: AppColors.textMuted),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Rank team by', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                      const SizedBox(height: 6),
+                      Container(
+                        height: 42,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Collected amount', style: TextStyle(fontSize: 13, color: AppColors.textPrimary)),
+                            Icon(Icons.keyboard_arrow_down, size: 18, color: AppColors.textMuted),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 14),
+
+          // As of 26 Nov 2026 Collection Card
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('As of ${DateFormat('d MMM yyyy').format(DateTime.now())}', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                const SizedBox(height: 12),
+                const Text('Collection due', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                const SizedBox(height: 4),
+                const Text(
+                  '₹33,02,589.90',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.6,
+                    color: Color(0xFF0F4C81),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -791,26 +866,41 @@ class HomeScreen extends StatelessWidget {
   // ==========================================
   Widget _buildWarehouseDashboard(BuildContext context, AEConnectProvider provider) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Warehouse orders', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.navy)),
-                  Text('Dispatch desk · 26 Nov 2026', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                  const Text('Warehouse orders', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.5, color: AppColors.navy)),
+                  const SizedBox(height: 2),
+                  Text('Dispatch desk · ${DateFormat('d MMM yyyy').format(DateTime.now())}', style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
                 ],
               ),
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventoryScreen())),
                 icon: const Icon(Icons.inventory_2_outlined, size: 16),
                 label: const Text('Inventory'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          ModuleBanner(
+            label: 'AE CONNECT / WAREHOUSE',
+            title: 'Dispatch desk',
+            description: '1 active orders · 1 awaiting stock',
+            image: 'assets/photography/banner-warehouse-v1.jpg',
+            actionLabel: 'Open orders',
+            actionIcon: Icons.local_shipping_outlined,
+            onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen())),
           ),
           const SizedBox(height: 16),
           _buildOrderRow(

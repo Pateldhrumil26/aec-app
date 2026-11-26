@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/user_role.dart';
 import '../../providers/aeconnect_provider.dart';
+import '../../components/module_banner.dart';
 import 'attendance_screen.dart';
 import 'leaves_screen.dart';
 import 'expenses_screen.dart';
@@ -39,6 +40,15 @@ class EssScreen extends StatelessWidget {
             const Text(
               'John Doe · 26 Nov 2026',
               style: TextStyle(fontSize: 12.5, color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 16),
+
+            // Hero Banner matching prototype
+            const ModuleBanner(
+              label: 'EMPLOYEE SERVICES',
+              title: 'Your workday',
+              description: '6 requests awaiting review',
+              image: 'assets/photography/banner-workday-v1.jpg',
             ),
             const SizedBox(height: 16),
 
