@@ -255,40 +255,30 @@ class AEConnectProvider extends ChangeNotifier {
   // --- TASKS & FOLLOW-UPS ---
   final List<TaskModel> _tasks = [
     TaskModel(
-      id: 'TSK-01',
-      title: 'Follow-up on Proposal QT-2026-0001',
+      id: 't1',
+      title: 'Call Acme about the fiber proposal',
       accountName: 'Acme Technologies',
       leadId: 'LD-2026-001',
       dueDate: DateTime.now(),
+      time: '11:00',
+      taskType: 'Call',
+      assignedTo: 'John Doe',
       priority: TaskPriority.high,
-      category: TaskCategory.call,
-      notes: 'Check if Rajesh reviewed the discount matrix.',
+      isCompleted: true,
+      notes: 'Confirm phase-one quantities.',
     ),
     TaskModel(
-      id: 'TSK-02',
-      title: 'Send updated optical fiber specs and test reports',
-      accountName: 'Bharat Infotech Solutions',
+      id: 't2',
+      title: 'Schedule Bright Infra site visit',
+      accountName: 'Bright Infra Solutions',
       leadId: 'LD-2026-002',
       dueDate: DateTime.now().add(const Duration(days: 1)),
+      time: '14:30',
+      taskType: 'Visit',
+      assignedTo: 'John Doe',
       priority: TaskPriority.medium,
-      category: TaskCategory.email,
-    ),
-    TaskModel(
-      id: 'TSK-03',
-      title: 'Overdue payment collection call',
-      accountName: 'CyberNet Fiber Systems',
-      dueDate: DateTime.now().subtract(const Duration(days: 1)),
-      priority: TaskPriority.high,
-      category: TaskCategory.call,
-      notes: 'Invoice #INV-8812 is 30 days overdue.',
-    ),
-    TaskModel(
-      id: 'TSK-04',
-      title: 'Prepare MOM for Campus Backbone meeting',
-      accountName: 'Acme Technologies',
-      dueDate: DateTime.now().add(const Duration(days: 2)),
-      priority: TaskPriority.low,
-      category: TaskCategory.document,
+      isCompleted: true,
+      notes: 'Coordinate with the procurement team.',
     ),
   ];
 
@@ -304,6 +294,19 @@ class AEConnectProvider extends ChangeNotifier {
 
   void addTask(TaskModel task) {
     _tasks.insert(0, task);
+    notifyListeners();
+  }
+
+  void updateTask(TaskModel task) {
+    final idx = _tasks.indexWhere((t) => t.id == task.id);
+    if (idx != -1) {
+      _tasks[idx] = task;
+      notifyListeners();
+    }
+  }
+
+  void deleteTask(String id) {
+    _tasks.removeWhere((t) => t.id == id);
     notifyListeners();
   }
 

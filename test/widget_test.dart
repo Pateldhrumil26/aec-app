@@ -46,6 +46,33 @@ void main() {
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
 
+    // 7b. Navigate to Tasks tab
+    await tester.tap(find.text('Tasks'));
+    await tester.pumpAndSettle();
+
+    // Verify Tasks screen components matching prototype exactly
+    expect(find.text('Due today'), findsOneWidget);
+    expect(find.text('Overdue'), findsOneWidget);
+    expect(find.text('Completed'), findsWidgets);
+    expect(find.text('Add task'), findsOneWidget);
+    expect(find.text('Call Acme about the fiber proposal'), findsOneWidget);
+    expect(find.text('Schedule Bright Infra site visit'), findsOneWidget);
+
+    // Tap Add task to open TaskFormScreen
+    await tester.tap(find.text('Add task'));
+    await tester.pumpAndSettle();
+
+    // Verify New task form
+    expect(find.text('New task'), findsOneWidget);
+    expect(find.text('Set the customer, assignee and due date.'), findsOneWidget);
+    expect(find.text('Task title *'), findsOneWidget);
+    expect(find.text('Related lead / customer *'), findsOneWidget);
+    expect(find.text('Save task'), findsOneWidget);
+
+    // Tap Cancel to return to Tasks screen
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
     // 8. Tap Profile Avatar icon in Header
     await tester.tap(find.byKey(const Key('header_profile_button')));
     await tester.pumpAndSettle();
