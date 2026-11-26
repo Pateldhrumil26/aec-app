@@ -145,38 +145,40 @@ class _VisitsScreenState extends State<VisitsScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  // Filter Chips
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: ['All', 'Active', 'Awaiting Summary', 'Completed'].map((filter) {
-                        final isSelected = _selectedFilter == filter;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: InkWell(
+                  // Segmented Tabs: Underlined Text Tabs
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(bottom: BorderSide(color: AppColors.border)),
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: ['All', 'Active', 'Awaiting Summary', 'Completed'].map((filter) {
+                          final isSelected = _selectedFilter == filter;
+                          return InkWell(
                             onTap: () => setState(() => _selectedFilter = filter),
-                            borderRadius: BorderRadius.circular(6),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primaryLight : Colors.white,
-                                border: Border.all(
-                                  color: isSelected ? AppColors.primary : AppColors.border,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: isSelected ? const Color(0xFF137265) : Colors.transparent,
+                                    width: 2,
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 filter,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                  color: isSelected ? const Color(0xFF137265) : const Color(0xFF7A8798),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ],

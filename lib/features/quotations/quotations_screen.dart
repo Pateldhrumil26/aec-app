@@ -54,24 +54,41 @@ class _QuotationsScreenState extends State<QuotationsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Filter Chips
-                  Row(
-                    children: ['All', 'Under Review', 'Approved'].map((f) {
-                      final isSelected = _selectedFilter == f;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text(f),
-                          selected: isSelected,
-                          onSelected: (_) => setState(() => _selectedFilter = f),
-                          selectedColor: AppColors.primary,
-                          labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : AppColors.textSecondary,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                  // Segmented Tabs: Underlined Text Tabs
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(bottom: BorderSide(color: AppColors.border)),
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: ['All', 'Under Review', 'Approved'].map((f) {
+                          final isSelected = _selectedFilter == f;
+                          return InkWell(
+                            onTap: () => setState(() => _selectedFilter = f),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: isSelected ? AppColors.primary : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                f,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  color: isSelected ? AppColors.primary : const Color(0xFF7A8798),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 14),
                 ],
