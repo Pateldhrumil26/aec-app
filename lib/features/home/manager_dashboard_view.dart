@@ -10,6 +10,7 @@ import '../leads/leads_screen.dart';
 import '../moms/mom_detail_screen.dart';
 import '../moms/moms_screen.dart';
 import '../orders/orders_screen.dart';
+import '../quotations/approvals_screen.dart';
 import '../quotations/quotation_detail_screen.dart';
 import '../quotations/quotations_screen.dart';
 import '../team/salesperson_report_screen.dart';
@@ -68,7 +69,7 @@ class _ManagerDashboardViewState extends State<ManagerDashboardView> {
                   ElevatedButton.icon(
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const QuotationsScreen()),
+                      MaterialPageRoute(builder: (_) => const ApprovalsScreen()),
                     ),
                     icon: const Icon(Icons.verified_user_outlined, size: 16),
                     label: const Text('Review queue'),
@@ -531,7 +532,7 @@ class _ManagerDashboardViewState extends State<ManagerDashboardView> {
                       borderColor: const Color(0xFFFEF3C7),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const QuotationsScreen()),
+                        MaterialPageRoute(builder: (_) => const ApprovalsScreen(initialTab: 0)),
                       ),
                     ),
                   ),
@@ -546,7 +547,7 @@ class _ManagerDashboardViewState extends State<ManagerDashboardView> {
                       borderColor: const Color(0xFFF3E8FF),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const MomsScreen()),
+                        MaterialPageRoute(builder: (_) => const ApprovalsScreen(initialTab: 1)),
                       ),
                     ),
                   ),
