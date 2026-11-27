@@ -677,6 +677,81 @@ class AEConnectProvider extends ChangeNotifier {
 
   List<CustomerModel> get customers => List.unmodifiable(_customers);
 
+  // --- CRM CONTACTS ---
+  final List<Map<String, String>> _crmContacts = [
+    {
+      'id': 'ct1',
+      'name': 'Rahul Sharma',
+      'role': 'Procurement Head',
+      'company': 'Acme Technologies',
+      'leadId': 'LD-2026-001',
+      'phone': '9000000101',
+      'altPhone': '',
+      'email': 'rahul@acme.example',
+      'city': 'Noida',
+      'state': 'Uttar Pradesh',
+      'address': 'Sector 62, Noida',
+      'notes': 'Primary decision-maker for passive networking.',
+    },
+    {
+      'id': 'ct2',
+      'name': 'Priya Patel',
+      'role': 'Procurement Head',
+      'company': 'Bright Infra Solutions',
+      'leadId': 'LD-2026-002',
+      'phone': '9000000102',
+      'altPhone': '',
+      'email': 'priya@bright.example',
+      'city': 'Ahmedabad',
+      'state': 'Gujarat',
+      'address': 'SG Highway, Ahmedabad',
+      'notes': 'Handles quarterly rate contracts.',
+    },
+    {
+      'id': 'ct3',
+      'name': 'Ankit Shah',
+      'role': 'Procurement Head',
+      'company': 'CityNet Communications',
+      'leadId': '',
+      'phone': '9000000103',
+      'altPhone': '',
+      'email': 'ankit@citynet.example',
+      'city': 'Surat',
+      'state': 'Gujarat',
+      'address': 'Ring Road, Surat',
+      'notes': '',
+    },
+    {
+      'id': 'ct4',
+      'name': 'Sample Buyer 1',
+      'role': 'Procurement Manager',
+      'company': 'Demo · Horizon Broadband',
+      'leadId': '',
+      'phone': '9000104010',
+      'altPhone': '',
+      'email': 'emp104.buyer0@example.com',
+      'city': 'Pune',
+      'state': 'Maharashtra',
+      'address': '',
+      'notes': '',
+    },
+  ];
+
+  List<Map<String, String>> get crmContacts => List.unmodifiable(_crmContacts);
+
+  void addCrmContact(Map<String, String> contact) {
+    _crmContacts.insert(0, contact);
+    notifyListeners();
+  }
+
+  void updateCrmContact(String id, Map<String, String> updated) {
+    final idx = _crmContacts.indexWhere((c) => c['id'] == id);
+    if (idx != -1) {
+      _crmContacts[idx] = updated;
+      notifyListeners();
+    }
+  }
+
   // --- NOTIFICATIONS ---
   final List<NotificationModel> _notifications = [
     NotificationModel(

@@ -78,32 +78,34 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Visual Waves Banner matching prototype with cyan bottom accent line
+                  // Edge-to-edge Top Waves Banner with cyan bottom line (matching prototype)
                   Container(
+                    width: double.infinity,
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(color: Color(0xFF00A9DA), width: 2),
                       ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                      child: Image.asset(
-                        'assets/photography/auth-network-waves.png',
-                        height: 110,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                    child: Image.asset(
+                      'assets/photography/auth-network-waves.png',
+                      height: 110,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
                   // Top Brand Header with Portal Tag matching design
                   Row(
@@ -182,6 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Prototype · Records stay in this browser.\nOTP, email and account verification are simulated.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 11, color: AppColors.textLight, height: 1.5),
+                    ),
+                  ),
+                      ],
                     ),
                   ),
                 ],
